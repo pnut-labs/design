@@ -38,4 +38,4 @@ An accepted RFC becomes code, and the code's reference documentation
 
 | RFC | Title | Status |
 |---|---|---|
-| [0001](0001-nuttx.md) | NuttX as the operating system | Draft |
+| [0001](0001-nuttx.md) | NuttX as the operating system | Accepted |

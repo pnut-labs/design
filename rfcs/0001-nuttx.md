@@ -1,6 +1,6 @@
 # RFC 0001: NuttX as the operating system
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-09-28
 - **Last changed:** 2026-09-28
