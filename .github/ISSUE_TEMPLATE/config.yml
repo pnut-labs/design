@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ideas and questions
+    url: https://github.com/pnut-labs/design/discussions
+    about: Raise an idea or ask a question before it becomes a proposal
