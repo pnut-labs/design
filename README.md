@@ -15,7 +15,7 @@ what the system should be and why.
 |---|---|
 | [`rfcs/`](rfcs/) | Design proposals, one per topic, numbered. Each is discussed in its pull request and becomes part of the design when merged. [How it works](rfcs/README.md). |
 | [`current/`](current/) | The system as it is today (pnut-os v2 on the LilyGo T-Deck Max): the starting point, and what the RFCs change. |
-| [`hardware/`](hardware/) | The next device: parts chosen, open questions, what to test before a board. |
+| [`hardware/`](hardware/) | The devices pnut-os runs on: the LilyGo T-Deck Max (more may follow). |
 
 Principles and the service map will come here as the first RFCs are
 accepted.
