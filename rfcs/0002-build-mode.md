@@ -99,9 +99,10 @@ Self-built firmware can include native code, and needs none of this.
   Hardest to misuse, but too closed for an enthusiast device.
 - **Guarded native installs:** the owner's PIN for each install, a
   signing key enrolled on the device, a wipe when native apps are first
-  turned on, markings and a safe mode. Not chosen: each adds a step for everyone who
-  builds on the device, while turning native apps on and confirming each
-  install on the screen already make installing one a conscious act.
+  turned on, markings and a safe mode. Not chosen: each adds a step for
+  everyone who builds on the device, while turning native apps on and
+  confirming each install on the screen already make installing one a
+  conscious act.
 
 ## Costs and risks
 
