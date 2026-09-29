@@ -3,15 +3,16 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-09-28
-- **Last changed:** 2026-09-28
+- **Last changed:** 2026-09-29
 - **Supersedes / superseded by:** —
 
 ## Summary
 
 pnut-os uses NuttX's flat build until it runs on hardware that can do
-better. Protection goes where the risk is: apps we distribute are
-WebAssembly, confined by their runtime; native code is trusted. You can
-still install native apps of your own, deliberately, over USB.
+better. Protection goes where the risk is: apps distributed by the
+pnut-os project are WebAssembly, confined by their runtime; native code is
+trusted. The device's owner can still install native apps, deliberately,
+over USB.
 
 ## Problem
 
@@ -55,10 +56,12 @@ to hardware that has it.
 
 - **Trusted, native:** the kernel, the drivers, the system services and
   the shell: the firmware.
-- **Not trusted, WebAssembly:** every app we distribute. A WebAssembly
-  module reaches only its own memory and the functions its host gives it,
-  so the runtime is the boundary. Which runtime is decided in its own RFC.
-- **Native apps you install yourself** are trusted too (below).
+- **Not trusted, WebAssembly:** every app distributed by the pnut-os
+  project. A WebAssembly module reaches only its own memory and the
+  functions its host gives it, so the runtime is the boundary. Which
+  runtime is decided in its own RFC.
+- **Native apps installed by the device's owner** are trusted too
+  (below).
 
 ### The rule that keeps the protected build possible
 
@@ -69,10 +72,10 @@ build, so moving to it later is board and linker work, not a redesign.
 
 ### Native apps
 
-You can install native apps. A native app runs with the system's full
-rights: it can read and change everything, permissions do not restrict it,
-and a bug in it can bring the device down. Installing one is meant to be a
-conscious step, not a hard one:
+The device's owner can install native apps. A native app runs with the
+system's full rights: it can read and change everything, permissions do
+not restrict it, and a bug in it can bring the device down. Installing one
+is meant to be a conscious step, not a hard one:
 
 - **Off by default.** A switch in Developer options turns native apps on.
 - **Over USB only**, never from the store or the network. Each install is
@@ -82,8 +85,7 @@ conscious step, not a hard one:
   built for another version rather than letting it crash; native apps are
   rebuilt after an update. (WebAssembly apps are not affected.)
 
-Firmware you build yourself can include native code, and needs none of
-this.
+Self-built firmware can include native code, and needs none of this.
 
 ## Alternatives
 
@@ -95,11 +97,12 @@ this.
   with better hardware.
 - **Native apps only in self-built firmware** (no loader in the image).
   Hardest to misuse, but too closed for an enthusiast device.
-- **Guarded native installs:** your PIN for each install, a signing key
-  enrolled on the device, a wipe when native apps are first turned on,
-  markings and a safe mode. Not chosen: each adds a step for everyone who
-  builds on the device, while turning native apps on and confirming each
-  install on the screen already make installing one a conscious act.
+- **Guarded native installs:** the owner's PIN for each install, a
+  signing key enrolled on the device, a wipe when native apps are first
+  turned on, markings and a safe mode. Not chosen: each adds a step for
+  everyone who builds on the device, while turning native apps on and
+  confirming each install on the screen already make installing one a
+  conscious act.
 
 ## Costs and risks
 
