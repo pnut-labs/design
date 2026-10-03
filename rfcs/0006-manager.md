@@ -76,11 +76,20 @@ nuttx-apps fork ([RFC 0003](0003-repositories.md)).
    already running does nothing.
 
 2. **Restart limits and a growing delay.** New service options set the
-   first delay and the longest one; the delay doubles with each failure in
-   a row and goes back to the first once the service has stayed up long
-   enough. After a set number of failures within a set time, the service is
-   `failed` and is not restarted again, or the device restarts if the
-   service is declared with `reboot_on_failure`.
+   first delay and the longest one. The delay counts from the moment the
+   service exited (today's `restart_period` counts from when it started),
+   doubles with each failure in a row, and goes back to the first once the
+   service has stayed up long enough. After a set number of failures within
+   a set time, the service is `failed` and is not restarted again;
+   `init.rc` can react to that like any other state:
+
+   ```
+   on property:svc.modemd.state=failed
+      start modem-recovery
+   ```
+
+   `reboot_on_failure` keeps its present meaning: the device restarts at
+   the service's first failure.
 
 3. **A control socket.** A local stream socket at a fixed path, speaking a
    small text protocol: one command per line, one answer per command, and
