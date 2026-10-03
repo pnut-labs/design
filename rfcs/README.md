@@ -42,3 +42,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0002](0002-build-mode.md) | Build mode and trust | Accepted |
 | [0003](0003-repositories.md) | Repositories and upstream | Accepted |
 | [0004](0004-layers.md) | Layers and rules | Accepted |
+| [0005](0005-communication.md) | Communication | Accepted |
