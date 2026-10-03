@@ -1,6 +1,6 @@
 # RFC 0006: The manager
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
 - **Last changed:** 2026-10-03
