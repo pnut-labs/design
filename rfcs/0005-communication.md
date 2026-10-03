@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-09-29
-- **Last changed:** 2026-09-29
+- **Last changed:** 2026-10-03
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -38,10 +38,11 @@ the connection open.
 - **Sockets are waited on in the event loop** with the program's other
   sources.
 
-Both features above need NuttX's `NET_LOCAL_SCM`. A stream socket keeps no
-message boundaries, so each message carries a small fixed header: its
-length, the interface and method, a request number that matches a reply to
-its request, and a status in replies.
+Peer credentials (`SO_PEERCRED`) and passing open files (`SCM_RIGHTS`)
+need NuttX's `NET_LOCAL_SCM` option. A stream socket has no message
+boundaries, so each message carries a small fixed header: its length, the
+interface and method, a request number that matches a reply to its
+request, and a status in replies.
 
 ### High-rate streams: shared memory
 
@@ -129,6 +130,22 @@ the same loop would wait forever.
 - work is batched, and timers are gathered so the processor wakes once
   instead of many times;
 - long lists are paged, never sent whole.
+
+### What it needs from NuttX
+
+`eventfd` and `memfd_create` come from Linux rather than POSIX; NuttX
+provides both. The options this RFC relies on:
+
+| Feature | NuttX option |
+|---|---|
+| Peer credentials and passing open files on local sockets | `NET_LOCAL_SCM` |
+| `eventfd` | `EVENT_FD` |
+| `shm_open` and `mmap` of shared memory | `FS_SHMFS` |
+| `memfd_create` | `LIBC_MEMFD_SHMFS` (on `FS_SHMFS`) |
+| uORB | `UORB` (needs `SENSORS` and `USENSOR`) |
+
+`epoll`, which the event loop waits with, is always built. These were
+checked in NuttX's code at 13.1.0-RC0, not yet run on the device.
 
 ## Measurements
 
