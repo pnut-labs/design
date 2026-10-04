@@ -44,3 +44,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0004](0004-layers.md) | Layers and rules | Accepted |
 | [0005](0005-communication.md) | Communication | Accepted |
 | [0006](0006-manager.md) | The manager | Accepted |
+| [0007](0007-services.md) | Services and programs | Accepted |
