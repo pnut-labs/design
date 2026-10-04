@@ -45,4 +45,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0005](0005-communication.md) | Communication | Accepted |
 | [0006](0006-manager.md) | The manager | Accepted |
 | [0007](0007-services.md) | Services and programs | Accepted |
-| [0008](0008-runtime.md) | The app runtime | Draft |
+| [0008](0008-runtime.md) | The app runtime | Accepted |

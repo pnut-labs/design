@@ -1,6 +1,6 @@
 # RFC 0008: The app runtime
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-04
 - **Last changed:** 2026-10-04
