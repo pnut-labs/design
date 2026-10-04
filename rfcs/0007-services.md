@@ -1,6 +1,6 @@
 # RFC 0007: Services and programs
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
 - **Last changed:** 2026-10-03
