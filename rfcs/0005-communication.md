@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-09-29
-- **Last changed:** 2026-10-03
+- **Last changed:** 2026-10-04
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -42,7 +42,10 @@ Peer credentials (`SO_PEERCRED`) and passing open files (`SCM_RIGHTS`)
 need NuttX's `NET_LOCAL_SCM` option. A stream socket has no message
 boundaries, so each message carries a small fixed header: its length, the
 interface and method, a request number that matches a reply to its
-request, and a status in replies.
+request, and a status in replies. On the WebAssembly runtime's
+connections, the header also names the app a message is for
+([RFC 0008](0008-runtime.md)); services accept that field only from the
+runtime, and other callers leave it empty.
 
 ### High-rate streams: shared memory
 
