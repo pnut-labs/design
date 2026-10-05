@@ -52,4 +52,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0012](0012-developer-access.md) | Developer access | Accepted |
 | [0013](0013-firmware-updates.md) | Firmware updates | Accepted |
 | [0014](0014-security.md) | Security | Accepted |
-| [0015](0015-network.md) | Network access for apps | Draft |
+| [0015](0015-network.md) | Network access for apps | Accepted |
