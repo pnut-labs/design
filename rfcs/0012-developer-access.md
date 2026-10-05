@@ -34,9 +34,10 @@ The developer's tool is **adb**, Android's debug bridge: its client runs
 on every common operating system. NuttX's adb daemon, `adbd` in
 nuttx-apps, is built from the microADB project.
 
-- **microADB is pinned** to a fixed commit in the nuttx-apps fork
-  ([RFC 0003](0003-repositories.md)); nuttx-apps fetches its master
-  branch, whatever it holds at the time.
+- **microADB is pinned.** Upstream nuttx-apps downloads microADB's master
+  branch, whatever it holds at the time; the nuttx-apps fork changes that
+  to one fixed commit, moved only on purpose
+  ([RFC 0003](0003-repositories.md)).
 - **Keys are checked for real.** The previous system had to add the check
   of a computer's signature to microADB; it is a commit in the fork.
 - **`adbd` runs only while Developer options are on.** The manager starts
@@ -87,8 +88,9 @@ port is for:**
   then gives up the other two until the port is switched back. Where the
   chip allows, one composite device carries adb and a serial console
   together.
-- **Board switches the port,** since what it can be differs from device
-  to device ([RFC 0007](0007-services.md)).
+- **The Board service switches the port.** Board is the service that
+  keeps what is specific to one device ([RFC 0007](0007-services.md)), and
+  what the port can be differs from device to device.
 
 ### Debugging
 
@@ -115,7 +117,8 @@ port is for:**
 ## Costs and risks
 
 - **adb over the network is not encrypted:** anyone on the same network
-  can read the session. It is for trusted networks only; SSH is the
+  can read the session, and change what it carries, such as the commands
+  sent to the shell. It is for trusted networks only; SSH is the
   encrypted choice.
 - **microADB is pinned and patched** in the fork, so its fixes are taken
   by hand.
