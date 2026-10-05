@@ -60,6 +60,7 @@ under [`hardware/`](../hardware/).
 | **Contacts** | the address book and the call history |
 | **Packages** | installed apps, native and WebAssembly, and the permissions each has been granted |
 | **Storage** | apps' files and databases, and external storage: mounting it and preparing the apps' storage ([RFC 0011](0011-storage.md)) |
+| **Network** | connectivity (which link carries traffic, what it costs), name lookups, TLS and the trusted certificates, and apps' connections ([RFC 0015](0015-network.md)) |
 
 ### What is not a service
 
@@ -146,7 +147,7 @@ an app starts, not on every call.
 |---|---|
 | **system** | Service states, Settings, Power, Time, Notifications, Log, Board |
 | **telephony** | Telephony |
-| **radios** | Radio, Wi-Fi, Bluetooth, NFC |
+| **radios** | Radio, Wi-Fi, Bluetooth, NFC, Network |
 | **sensors** | Location, Motion, Sensors, Health |
 | **data** | Messages, Contacts, Packages, Storage |
 | **media** | Audio, Camera, Haptics |
