@@ -53,3 +53,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0013](0013-firmware-updates.md) | Firmware updates | Accepted |
 | [0014](0014-security.md) | Security | Accepted |
 | [0015](0015-network.md) | Network access for apps | Accepted |
+| [0016](0016-usb-files.md) | USB file transfer | Draft |
