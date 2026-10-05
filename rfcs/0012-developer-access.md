@@ -36,8 +36,8 @@ nuttx-apps, is built from the microADB project.
 
 - **microADB is pinned.** Upstream nuttx-apps downloads microADB's master
   branch, whatever it holds at the time; the nuttx-apps fork changes that
-  to one fixed commit, moved only on purpose
-  ([RFC 0003](0003-repositories.md)).
+  to one fixed commit, moved only once a newer one has been tested and
+  verified ([RFC 0003](0003-repositories.md)).
 - **Keys are checked for real.** The previous system had to add the check
   of a computer's signature to microADB; it is a commit in the fork.
 - **`adbd` runs only while Developer options are on.** The manager starts
@@ -118,8 +118,9 @@ port is for:**
 
 - **adb over the network is not encrypted:** anyone on the same network
   can read the session, and change what it carries, such as the commands
-  sent to the shell. It is for trusted networks only; SSH is the
-  encrypted choice.
+  sent to the shell. Developer options are for developers, who are
+  expected to use it only on networks they trust; SSH is the encrypted
+  choice.
 - **microADB is pinned and patched** in the fork, so its fixes are taken
   by hand.
 - **The shell has full rights:** an authorized computer can read and
