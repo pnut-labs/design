@@ -56,4 +56,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0016](0016-usb-files.md) | USB file transfer | Accepted |
 | [0017](0017-i18n.md) | Languages and regions | Accepted |
 | [0018](0018-authenticator.md) | The authenticator | Accepted |
-| [0019](0019-system-ui.md) | The system UI | Draft |
+| [0019](0019-system-ui.md) | The system UI | Accepted |

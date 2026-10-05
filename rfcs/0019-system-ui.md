@@ -1,6 +1,6 @@
 # RFC 0019: The system UI
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-05
 - **Last changed:** 2026-10-06
