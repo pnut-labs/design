@@ -93,10 +93,10 @@ only after the owner unlocks it.
 derived from, so everything encrypted under it is unreadable at once; the
 partitions are then formatted, as in a factory reset (RFC 0010).
 
-**Unlocking follows RFC 0004:** the system UI shows the lock screen and
-passes what the owner entered to Security; Security checks it and
-announces the unlock state, which Storage and the other services follow
-([RFC 0011](0011-storage.md)).
+**Unlocking follows [RFC 0004](0004-layers.md):** the system UI shows
+the lock screen and passes what the owner entered to Security; Security
+checks it and announces the unlock state, which Storage and the other
+services follow ([RFC 0011](0011-storage.md)).
 
 ### The password vault
 
