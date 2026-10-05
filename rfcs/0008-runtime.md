@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-04
-- **Last changed:** 2026-10-04
+- **Last changed:** 2026-10-05
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -307,7 +307,7 @@ without breaking older readers.
 | Part | What it holds |
 |---|---|
 | **Identity** | the id, in reverse-DNS form (`org.example.mesh`); the name and description; the version shown, and a version number that only goes up; the publisher; the icon |
-| **Code** | the module; the host API level; the memory it asks for: the most it will use, like Java's `-Xmx` (the SDK's tool writes the same maximum into the module) |
+| **Code** | the module; the host API level; the memory it asks for: the most it will use, like Java's `-Xmx` (the SDK's tool writes the same maximum into the module); for a native app, the firmware build it was made for ([RFC 0009](0009-packages.md)) |
 | **Permissions** | each with the reason the app needs it, shown when the owner is asked |
 | **Hardware** | what it **needs**: without it the app is not installed and does not start (a mesh app without a LoRa radio); what it **can use**: without it the app runs with that part off, and asks the runtime what is present (a music player without a network). Names come from Board's description |
 | **Actions** | each with its id, label and export, and whether other apps may call it |
