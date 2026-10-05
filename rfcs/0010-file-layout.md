@@ -34,10 +34,13 @@ and apps' data does not fit beside the system.
 ### What NuttX allows
 
 - **Mount points, sockets and other special files live only in NuttX's
-  in-memory tree,** never inside a mounted volume. Local sockets are put
-  under `/var/run`, shared memory under `/var/shm`, message queues under
-  `/var/mqueue`. So `/var` cannot be one volume: volumes are mounted below
-  it.
+  in-memory tree,** never inside a mounted volume: NuttX refuses to create
+  one at a path inside a volume (`inode_reserve()` in its
+  `fs/inode/fs_inodereserve.c`). Local sockets are put under `/var/run`,
+  shared memory under `/var/shm`, message queues under `/var/mqueue`, by
+  default (`NET_LOCAL_VFS_PATH`, `FS_SHMFS_VFS_PATH`,
+  `FS_MQUEUE_VFS_PATH`). So `/var` cannot be one volume: volumes are
+  mounted below it.
 - **NuttX mounts a read-only image built into the firmware at `/etc`**
   when it starts (its `ETC_ROMFS` option).
 - **littlefs mounts on a block device** as well as on flash, so it can
@@ -57,7 +60,7 @@ Named as on Linux, with the Filesystem Hierarchy Standard's meanings:
 | `/opt/<id>` | the package store: installed apps (RFC 0009) | internal flash, read-only |
 | `/var/lib/<service>` | services' state: settings, messages, contacts, grants | internal flash |
 | `/var/lib/apps/<id>/data`, `.../cache` | built-in apps' data and cache | internal flash |
-| `/var/log` | logs kept across restarts; a link to `/var/lib/log` | internal flash |
+| `/var/log` | logs kept across restarts | a soft link in memory, to `/var/lib/log` on internal flash |
 | `/var/opt/<id>/data`, `.../cache` | installed apps' data and cache: the Filesystem Hierarchy Standard keeps the changing data of `/opt` packages in `/var/opt` | the apps' storage (below) |
 | `/var/run/<service>` | services' sockets (RFC 0005) | memory |
 | `/var/shm`, `/var/mqueue`, `/var/sem` | shared memory, message queues, named semaphores | memory |
@@ -81,7 +84,8 @@ of 4 MB, 64 KB of device data, 2 MB for the system, and the rest, about
 5.9 MB, for the package store.
 
 - **Logs live in the system partition,** in `/var/lib/log`, and
-  `/var/log` is a link to it (NuttX's `FS_LINKS`). The log service is
+  `/var/log` is a soft link to it in the in-memory tree (NuttX's
+  `FS_LINKS`). The log service is
   their only writer and caps their size by rotating them.
 - **Every littlefs volume costs RAM** for its caches, about 3 KB with
   NuttX's defaults, so internal flash has only two.
