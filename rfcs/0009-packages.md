@@ -92,8 +92,8 @@ Signing the file list signs every file, since each file's hash is in it.
   (RFC 0008) will need this signature.
 
 A signature says who made or distributed a package, not that its code is
-safe: WebAssembly apps are confined whoever made them, and native apps run
-with full rights whoever made them (RFC 0002).
+safe: WebAssembly apps are confined no matter who made them, and native
+apps run with full rights no matter who made them (RFC 0002).
 
 ### Where packages come from
 
