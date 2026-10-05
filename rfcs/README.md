@@ -46,4 +46,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0006](0006-manager.md) | The manager | Accepted |
 | [0007](0007-services.md) | Services and programs | Accepted |
 | [0008](0008-runtime.md) | The app runtime | Accepted |
-| [0009](0009-packages.md) | Packages | Draft |
+| [0009](0009-packages.md) | Packages | Accepted |
