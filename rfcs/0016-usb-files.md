@@ -1,6 +1,6 @@
 # RFC 0016: USB file transfer
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-05
 - **Last changed:** 2026-10-05
