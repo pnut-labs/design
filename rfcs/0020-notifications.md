@@ -1,6 +1,6 @@
 # RFC 0020: Notifications
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-06
 - **Last changed:** 2026-10-06
