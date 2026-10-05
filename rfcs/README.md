@@ -49,3 +49,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0009](0009-packages.md) | Packages | Accepted |
 | [0010](0010-file-layout.md) | The file layout | Accepted |
 | [0011](0011-storage.md) | Storage for apps | Accepted |
+| [0012](0012-developer-access.md) | Developer access | Draft |
