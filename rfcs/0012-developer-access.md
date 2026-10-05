@@ -1,6 +1,6 @@
 # RFC 0012: Developer access
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-05
 - **Last changed:** 2026-10-05
