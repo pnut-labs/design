@@ -77,7 +77,8 @@ port is for:**
 
 | Choice | Offered | Is |
 |---|---|---|
-| **File transfer** (the default) | always | MTP: the owner's files, designed in its own RFC |
+| **File transfer** (the default) | always | MTP: the owner's files ([RFC 0016](0016-usb-files.md)) |
+| **USB drive** | always | the owner's files as a disk, for large copies (RFC 0016) |
 | **adb** | with Developer options on | the developer's tool (above) |
 | **Serial and JTAG** | with Developer options on, where the chip has it | the console and the hardware debugger |
 
