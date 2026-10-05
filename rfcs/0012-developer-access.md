@@ -79,6 +79,7 @@ port is for:**
 |---|---|---|
 | **File transfer** (the default) | always | MTP: the owner's files ([RFC 0016](0016-usb-files.md)) |
 | **USB drive** | always | the owner's files as a disk, for large copies (RFC 0016) |
+| **Security key** | where the chip cannot offer it beside file transfer | the authenticator ([RFC 0018](0018-authenticator.md)) |
 | **adb** | with Developer options on | the developer's tool (above) |
 | **Serial and JTAG** | with Developer options on, where the chip has it | the console and the hardware debugger |
 
