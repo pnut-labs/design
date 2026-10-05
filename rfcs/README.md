@@ -55,3 +55,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0015](0015-network.md) | Network access for apps | Accepted |
 | [0016](0016-usb-files.md) | USB file transfer | Accepted |
 | [0017](0017-i18n.md) | Languages and regions | Accepted |
+| [0018](0018-authenticator.md) | The authenticator | Draft |
