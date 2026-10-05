@@ -58,3 +58,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0018](0018-authenticator.md) | The authenticator | Accepted |
 | [0019](0019-system-ui.md) | The system UI | Accepted |
 | [0020](0020-notifications.md) | Notifications | Accepted |
+| [0021](0021-sdk.md) | The SDK | Accepted |
