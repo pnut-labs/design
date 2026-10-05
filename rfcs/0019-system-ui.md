@@ -96,7 +96,7 @@ system UI draws them:
 
 | Building blocks | For |
 |---|---|
-| **Lists** | rows with a title, details, an icon, a value, a mark, a switch; long lists are fetched a page at a time (RFC 0005) |
+| **Lists** | rows with a title, details, an icon, a value, a mark, a switch; long lists are fetched a page at a time ([RFC 0005](0005-communication.md)) |
 | **Forms** | text, numbers, choices, dates and times, switches |
 | **Text and images** | text with simple styling, pictures, progress |
 | **Actions** | the primary action, options, confirmations |
