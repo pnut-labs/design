@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-03
+- **Last changed:** 2026-10-05
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -59,6 +59,7 @@ under [`hardware/`](../hardware/).
 | **Messages** | one store for SMS and mesh messages; Telephony and mesh apps deliver into it |
 | **Contacts** | the address book and the call history |
 | **Packages** | installed apps, native and WebAssembly, and the permissions each has been granted |
+| **Storage** | apps' files and databases, and external storage: mounting it and preparing the apps' storage ([RFC 0011](0011-storage.md)) |
 
 ### What is not a service
 
@@ -147,7 +148,7 @@ an app starts, not on every call.
 | **telephony** | Telephony |
 | **radios** | Radio, Wi-Fi, Bluetooth, NFC |
 | **sensors** | Location, Motion, Sensors, Health |
-| **data** | Messages, Contacts, Packages |
+| **data** | Messages, Contacts, Packages, Storage |
 | **media** | Audio, Camera, Haptics |
 | **security** | Security |
 | **ui** | the system UI |
