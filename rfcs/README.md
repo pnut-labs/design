@@ -51,4 +51,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0011](0011-storage.md) | Storage for apps | Accepted |
 | [0012](0012-developer-access.md) | Developer access | Accepted |
 | [0013](0013-firmware-updates.md) | Firmware updates | Accepted |
-| [0014](0014-security.md) | Security | Draft |
+| [0014](0014-security.md) | Security | Accepted |
