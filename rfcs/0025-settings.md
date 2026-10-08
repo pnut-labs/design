@@ -118,8 +118,9 @@ logged, the system UI shows it as dots, and only its owner reads it.
 
 ### Reset and backup
 
-- **The owner can reset one owner's settings** to their defaults from the
-  system UI; a factory reset erases them all (RFC 0010).
+- **From the system UI, the device's owner can reset** a service's or an
+  app's settings to their defaults; a factory reset erases them all
+  (RFC 0010).
 - **Backup and restore,** to external storage or a computer, is a later
   RFC.
 
