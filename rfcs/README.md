@@ -63,3 +63,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0023](0023-service-library.md) | The service library | Accepted |
 | [0024](0024-board.md) | Board | Accepted |
 | [0025](0025-settings.md) | Settings | Accepted |
+| [0026](0026-log.md) | Log | Accepted |
