@@ -61,4 +61,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0021](0021-sdk.md) | The SDK | Accepted |
 | [0022](0022-build.md) | Building and testing pnut-os | Accepted |
 | [0023](0023-service-library.md) | The service library | Accepted |
-| [0024](0024-board.md) | Board | Draft |
+| [0024](0024-board.md) | Board | Accepted |
