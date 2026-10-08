@@ -1,6 +1,6 @@
 # RFC 0023: The service library
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
 - **Last changed:** 2026-10-08
