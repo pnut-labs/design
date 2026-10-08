@@ -1,6 +1,6 @@
 # RFC 0022: Building and testing pnut-os
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
 - **Last changed:** 2026-10-08
