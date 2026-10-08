@@ -64,8 +64,7 @@ A **top-level `Makefile`** in `pnut-os` is the one entry point:
 |---|---|
 | `make <target>` | merges the board's configuration with pnut-os's fragment, kept with the target's `init.rc` in `configs/<target>/` (RFC 0003), configures NuttX, and builds the image |
 | `make <target> flash` | writes the image to the device, with the chip's tools |
-| `make sim` | builds the simulator target and runs it |
-| `make qemu` | builds the QEMU target and runs it |
+| `make <target> run` | builds the image and runs it: the simulator's on the computer, QEMU's in QEMU |
 | `make test` | runs the unit and system tests (below) |
 | `make style` | runs `nxstyle` on pnut-os's code |
 
