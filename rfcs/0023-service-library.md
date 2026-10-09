@@ -162,12 +162,23 @@ A first set:
 | timeout | no reply in time |
 | internal | the service failed |
 
-An interface may add a detail message in the reply's body.
+**An error's detail.** The body of an error answer may be one common
+message, `pnut.Error` (`proto/pnut/error.proto`). Its `code` is one of the
+interface's own numbers, listed as an enum in its `.proto`; 0 means none.
+Its `text` is short, at most 63 bytes; a longer one is cut at a
+character's start. The code tells programs which error of the status's
+kind it was; the text is for the log and developers, never shown on a
+screen, where text is translated (RFC 0017), and never carries the user's
+data (RFC 0026). A server gives it with the generated `*_fail()`; a
+caller's handler receives it beside the status, when the server gave one.
+A detail that does not decode is dropped, and the status stands. Every
+method's room for its answer (below) counts it.
 
 ### Services
 
 - **Room for every answer.** Each method declares the largest answer it
-  gives (its answer's largest encoding, from the `.proto`). A connection
+  gives (its answer's largest encoding, or an error's detail's, whichever
+  is larger, from the `.proto`). A connection
   takes a request only with that much room kept in its send buffer, until
   the answer is given, now or later; so an answer never finds the buffer
   full, however slowly the caller reads. The requests after one with no
@@ -181,9 +192,10 @@ An interface may add a detail message in the reply's body.
 - **Connections per caller** are bounded: a program, known by
   `SO_PEERCRED`, holds at most a few of a service's connections; one more
   is closed as soon as it is accepted, and logged. So one program cannot
-  take every connection and lock the others out. Apps reach services
-  through the runtime's one connection each (RFC 0008), so this is about
-  native programs.
+  take every connection and lock the others out. A caller whose pid
+  cannot be read is not counted, since it cannot be told from the others.
+  Apps reach services through the runtime's one connection each
+  (RFC 0008), so this is about native programs.
 
 ### Clients
 
@@ -271,6 +283,12 @@ Set for each program in the fragment; to be measured:
   two.
 - **Closing a connection whose answer does not fit.** Simple, but a slow
   caller is not a dead one, and every call it had in flight would fail.
+- **An error message for each method,** declared with an option. Typed
+  details, but more to declare and to generate, for no interface that
+  needs it yet; it can come later, beside the common one.
+- **No error detail at all,** with results in the answer's own fields.
+  Nothing to add, but every interface would invent its own way to say
+  which error it was.
 - **Idle connections closed after a while,** against one program holding
   many. But a connection that only waits for events is idle, and would be
   closed for doing its job.
@@ -289,11 +307,3 @@ Set for each program in the fragment; to be measured:
 - **Every message needs bounds,** which the generator enforces; an answer
   larger than declared is refused at run time, a bug found by its caller's
   `timeout`.
-
-## Open questions
-
-- **The detail of an error answer.** An interface may add a detail message
-  to an error's body (above), but nothing says yet how a `.proto` declares
-  it, and the generated code sends errors without one. A proposal: one
-  common message, `pnut.Error` (a code and a short text), whose largest
-  encoding every method's answer room counts.
