@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-09-29
-- **Last changed:** 2026-09-29
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -100,8 +100,9 @@ is a client of services and owns the screen and input.
   module.
 - **Keeps its queues bounded.** Nothing grows without limit:
   - **events** work as in uORB: each topic has a fixed queue depth, the
-    newest entry overwrites the oldest, and a reader can tell it missed
-    some; a topic that carries state keeps only its latest value;
+    newest entry overwrites the oldest, and a topic of events numbers its
+    entries, so that a reader can tell it missed some; a topic that
+    carries state keeps only its latest value;
   - **requests** are bounded: when full, the answer is "busy" at once, and
     every request has a timeout;
   - **streams** use credit: the receiver says how much it can take, and

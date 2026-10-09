@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-08
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -93,9 +93,13 @@ with different values on different devices.
 One uORB topic, **`settings`**, carries each change as the owner, the
 key and a version number, never the value: topics are open to all native
 code ([RFC 0005](0005-communication.md)), and values may be secrets.
-Readers fetch the value. A reader that missed changes (uORB says so)
-reads its settings again. The runtime passes an app only the changes to
-its own settings (RFC 0008).
+Readers fetch the value. An empty key means that several of the owner's
+settings may have changed: its schema was registered, or all were reset.
+The version counts Settings' changes, all owners' together, one up for
+each message, so a reader checks every message's version: a reader that
+sees a gap, or a smaller one (Settings restarted), missed changes and
+reads its settings again. The runtime passes an app only the
+changes to its own settings (RFC 0008).
 
 ### Secrets
 

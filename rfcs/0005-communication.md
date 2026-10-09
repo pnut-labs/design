@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-09-29
-- **Last changed:** 2026-10-04
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -75,9 +75,11 @@ Other streams run over the socket, with credit (RFC 0004).
 ### Events: uORB
 
 Events are uORB topics: each topic is a device file with fixed-size
-messages and a fixed queue depth; readers wait on it in the event loop,
-can tell when they missed messages, and read the latest value when they
-subscribe. A topic that carries state has a depth of one.
+messages and a fixed queue depth; readers wait on it in the event loop
+and read the latest value when they subscribe. A topic that carries state
+has a depth of one. uORB drops the oldest message a reader has not read
+without saying so, so a topic of events numbers its messages: a reader
+who sees a gap knows it missed some and reads the state again.
 
 - **Any native program can read or publish any topic,** so topics carry
   nothing that needs permission to read.
