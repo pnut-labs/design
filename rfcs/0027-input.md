@@ -1,6 +1,6 @@
 # RFC 0027: Input
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-09
 - **Last changed:** 2026-10-09
