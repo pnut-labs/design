@@ -73,8 +73,8 @@ The description comes from two sources, which Board merges and serves:
 ### Inputs
 
 The description names a device's inputs by kind, so the system UI
-([RFC 0019](0019-system-ui.md)) and input ([RFC 0027](0027-input.md))
-adapt without knowing the device:
+(RFC 0019) and input ([RFC 0027](0027-input.md)) adapt without knowing
+the device:
 
 | Kind | Described with |
 |---|---|
