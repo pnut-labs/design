@@ -99,11 +99,11 @@ options:** a method's number, version and permission; a topic's message
 and queue depth. Generated code is made at build time and never committed;
 `protoc` and nanopb's plugin are in the container image (RFC 0022).
 
-- **nanopb 0.4.9.1,** fetched by pnut-os's build and checked against a
-  pinned SHA-256 (RFC 0022), then built by nuttx-apps' package and by the
-  unit tests from that copy. Its generator writes names in C style
-  (`settings_get_request_t`, not `settings_GetRequest`), as NuttX's style
-  wants.
+- **nanopb,** at a release the build pins and checks against its SHA-256
+  (RFC 0022): the version lives there, and moves on purpose. nuttx-apps'
+  package and the unit tests build from that copy. Its generator writes
+  names in C style (`settings_get_request_t`, not `settings_GetRequest`),
+  as NuttX's style wants.
 - **A program keeps a server object** for each interface it serves, and a
   **client object** for each connection it makes, statically or in a
   module's state. They hold the buffers a request or an answer is decoded
