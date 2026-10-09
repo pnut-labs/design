@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-08
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -69,6 +69,42 @@ The description comes from two sources, which Board merges and serves:
 | **Identity** | the model, the hardware revision, the serial number |
 | **Hardware present,** each with its parameters | radios and their bands; the screen's kind, size and depth; inputs (keyboard, touch, keys); sensors; audio parts; cameras; the modem's bands and SIM slots; internal flash and its partitions (RFC 0010); external storage slots; the USB port's possible modes (RFC 0012) |
 | **Limits for this device** | the apps' memory budget (RFC 0008); Storage's limits (RFC 0011); Network's (RFC 0015); Notifications' (RFC 0020); and others as RFCs add them |
+
+### Inputs
+
+The description names a device's inputs by kind, so the system UI
+(RFC 0019) and input ([RFC 0027](0027-input.md)) adapt without knowing
+the device:
+
+| Kind | Described with |
+|---|---|
+| **Keyboard** | its layout: the characters printed on each key, in layers (plain, Shift, and the others its keys show, such as Alt); the key given the Find role; and, where it does not use the system UI's suggested steering, its own (RFC 0019) |
+| **Function keys** | how many, and where: keys whose meaning the screen shows above or beside them, as a classic phone's soft keys |
+| **Navigation** | arrow keys, a joystick, a trackball, a wheel |
+| **Buttons** | power, volume and the other buttons, each with its role |
+| **Touch** | the touch screen: its size, and how many points it follows |
+
+A device may have any of them, or few: one is touch-only, another
+keys-only.
+
+### Keyboards
+
+Every keyboard driver delivers the same thing, whatever the device, so
+that input works alike on every keyboard:
+
+- **characters as printed on the keys:** the driver applies the layers
+  itself, from the board's keymap;
+- **modifiers** that select the layers (Shift, Alt and the like) behave
+  alike: held, for the keys pressed meanwhile; tapped, for the next key;
+  tapped twice, until tapped again;
+- **each modifier is reported while it is in effect,** pressed when it
+  takes effect and released when it ends, so input can tell what a key
+  was pressed with;
+- **keys with no character** (Enter, Backspace, Find) as special keys;
+- **a release reports what its press did,** whatever the modifiers are
+  by then;
+- **nothing beyond the keycaps:** what a chord such as Alt and Enter means
+  is the system UI's (RFC 0019), never the driver's.
 
 ### Who reads it
 
