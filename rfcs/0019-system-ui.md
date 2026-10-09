@@ -98,17 +98,39 @@ chord means on screen is the system UI's, the same in every app. Input
 | Keys | Meaning |
 |---|---|
 | **Function keys,** three | the options, the primary action, back, left to right |
-| **Function keys,** two | the options, back; the primary action is Enter or the navigation's centre |
-| **Enter** | the primary action |
-| **Alt and Enter** | the options |
-| **Alt and Backspace** | back |
-| **Space; Shift and Space** | the next page; the previous one |
-| **Find** (Sym on some keyboards) | find, in the screen's list |
+| **Function keys,** two | the options, back; the primary action is the steering's (below) |
+| **Alt and Enter** | the options, in a text field too |
+| **Space; Shift and Space** | outside a text field: the next page; the previous one |
 
 - **A chord counts the modifier in effect,** however it came to be: held,
   tapped before the key, or locked.
-- **The rest of the keyboard's map** (moving between items, the letters
-  of commands) is the visual design's, kept with it.
+- **Find is a role,** given to a key by the keyboard's description: on a
+  keyboard with a Sym key, Sym.
+
+### Steering with a keyboard
+
+A keyboard is often a device's only way to move between items. The system
+UI suggests this map; a device's description may name its own instead
+(RFC 0024), and the system UI follows it.
+
+| Keys | Outside a text field | While typing in one |
+|---|---|---|
+| **W, S** | up, down | type |
+| **A, D** | left, right, where the screen has a row (tabs, choices, a slider); the previous and the next page where it has not | type |
+| **Q, Backspace** | back | Q types; Backspace deletes |
+| **E, Enter** | the primary action | E types; Enter confirms a one-line field and moves to the next item, or starts a new line |
+| **Find held, with W, A, S, D** | as W, A, S, D | arrows: the cursor, and past the text's edge the neighbouring item |
+| **Find held, with Q; with E** | back; the primary action | leaving the field, its text kept; the screen's primary action |
+| **Find tapped** | find, in the screen's list | — |
+
+- **Arrow keys and a navigation's centre,** where the device has them, do
+  what W, A, S, D and E do, while typing too.
+- **The letters a map steers with** (W, A, S, D, Q and E in this one) are
+  never given to commands, so an option's letter never moves the screen.
+- **Backspace only deletes** while typing, even in an empty field: held,
+  it would otherwise delete the text and then leave the screen.
+- **How the hints look,** a letter beside an option for one, is the visual
+  design's.
 
 ### Apps' screens
 
