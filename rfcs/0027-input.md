@@ -85,10 +85,13 @@ meanings (the options, the primary action, back).
 
 ### Holding a key
 
-- **Backspace, Space, the arrows and the navigation repeat** while held:
-  after half a second, then 20 times a second, to start with. The owner
-  sets the delay and the rate, or turns repeating off.
-- **A letter does not repeat:** held, it offers its variants (below).
+- **Backspace, Space, the arrows, the navigation and the keys steering**
+  (W, A, S and D outside a text field, or with Find held, in the system
+  UI's suggested map, RFC 0019) repeat while held: after half a second,
+  then 20 times a second, to start with. The owner sets the delay and the
+  rate, or turns repeating off.
+- **A letter being typed does not repeat:** held, it offers its variants
+  (below).
 - **Modifiers, Enter and the function keys** never repeat.
 - **Input repeats, not the drivers,** which report a press and a release
   only. On an e-paper screen, repeated keys are gathered into one redraw
