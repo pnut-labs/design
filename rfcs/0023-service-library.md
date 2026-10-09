@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-08
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -34,9 +34,9 @@ The RFCs so far fix how programs behave, not the code they do it with:
   ([RFC 0010](0010-file-layout.md)).
 
 Every service would otherwise write these again. NuttX always builds
-`epoll`; `eventfd`, `timerfd` and `signalfd` are options; nuttx-apps
-packages nanopb 0.4.8 with its generator; uORB topics are file
-descriptors.
+`epoll`; `eventfd`, `timerfd` and `signalfd` are options; nuttx-apps has
+a package for nanopb, which downloads it, unchecked; uORB topics are
+file descriptors.
 
 ## Proposal
 
@@ -99,6 +99,25 @@ options:** a method's number, version and permission; a topic's message
 and queue depth. Generated code is made at build time and never committed;
 `protoc` and nanopb's plugin are in the container image (RFC 0022).
 
+- **nanopb,** at a release the build pins and checks against its SHA-256
+  (RFC 0022): the version lives there, and moves on purpose. nuttx-apps'
+  package and the unit tests build from that copy. Its generator writes
+  names in C style (`settings_get_request_t`, not `settings_GetRequest`),
+  as NuttX's style wants.
+- **A program keeps a server object** for each interface it serves, and a
+  **client object** for each connection it makes, statically or in a
+  module's state. They hold the buffers a request or an answer is decoded
+  into and encoded from, sized from nanopb's maximum sizes, so nothing is
+  allocated and nothing large goes on the stack.
+- **Handlers and calls are typed:** a server's handler receives the
+  decoded request; a call's handler, the decoded answer. A decoded body
+  is valid while its handler runs; a request answered later is kept as a
+  copy. A method a server leaves without a handler is answered
+  `not found`.
+- **Every message has bounds:** a string or a list without a maximum size
+  does not build, so every message has a largest encoding, which the
+  answers' room (below) relies on.
+
 **Inside a program,** a call to another module is delivered as the struct,
 with no socket and no encoding (RFC 0005): the generator knows the
 grouping of services into programs (RFC 0007), and writes the direct path
@@ -145,6 +164,27 @@ A first set:
 
 An interface may add a detail message in the reply's body.
 
+### Services
+
+- **Room for every answer.** Each method declares the largest answer it
+  gives (its answer's largest encoding, from the `.proto`). A connection
+  takes a request only with that much room kept in its send buffer, until
+  the answer is given, now or later; so an answer never finds the buffer
+  full, however slowly the caller reads. The requests after one with no
+  room yet wait in the socket.
+- **An answer larger than its method declared** is refused
+  (`-EMSGSIZE`), so it cannot take room kept for another. An event takes
+  only room that is not kept.
+- **Requests in flight** per connection are bounded; one more is answered
+  `busy` at once. Every request is answered, and once: one never answered
+  keeps its room until the connection closes.
+- **Connections per caller** are bounded: a program, known by
+  `SO_PEERCRED`, holds at most a few of a service's connections; one more
+  is closed as soon as it is accepted, and logged. So one program cannot
+  take every connection and lock the others out. Apps reach services
+  through the runtime's one connection each (RFC 0008), so this is about
+  native programs.
+
 ### Clients
 
 - **Every request has a timeout,** 5 s unless the call says otherwise;
@@ -152,9 +192,13 @@ An interface may add a detail message in the reply's body.
 - **When a service dies,** its connections drop (RFC 0005). The library
   reconnects with a growing delay, watching the service's state on the
   Service states topic, and tells the module when the connection is back,
-  so it reads the service's state again (RFC 0004).
-- **Requests in flight** per connection are bounded; one more is answered
-  `busy` at once.
+  so it reads the service's state again (RFC 0004). **The delay starts
+  again from the shortest only after a connection that lasted:** a
+  service that closes a connection as soon as it is accepted, because it
+  has no room for it, sees the delay grow, not a try every 100 ms.
+- **A client keeps one timer,** for its next try while it is not
+  connected and for its calls' deadlines while it is; so the timers' pool
+  holds one per client, whatever its calls.
 
 ### Caller identity
 
@@ -202,6 +246,8 @@ Set for each program in the fragment; to be measured:
 | Reconnecting | after 100 ms, doubling to 5 s |
 | A message | 4 KB at most |
 | Connections per service | 8 |
+| Connections per caller | 2 |
+| A connection's send buffer | 8 KB |
 
 ## Alternatives
 
@@ -219,6 +265,15 @@ Set for each program in the fragment; to be measured:
   over weeks, and failures nowhere to answer `busy`.
 - **A NuttX-only library.** One platform to write for, but every test
   would need the simulator.
+- **A whole message's room kept for every request,** instead of each
+  method's declared answer. Nothing to declare, but 4 KB per request: with
+  8 KB buffers, a service that answers later would stop reading after
+  two.
+- **Closing a connection whose answer does not fit.** Simple, but a slow
+  caller is not a dead one, and every call it had in flight would fail.
+- **Idle connections closed after a while,** against one program holding
+  many. But a connection that only waits for events is idle, and would be
+  closed for doing its job.
 
 ## Costs and risks
 
@@ -231,3 +286,14 @@ Set for each program in the fragment; to be measured:
   (RFC 0005).
 - **The Linux side** of each interface is one more thing to keep in step
   with the NuttX side.
+- **Every message needs bounds,** which the generator enforces; an answer
+  larger than declared is refused at run time, a bug found by its caller's
+  `timeout`.
+
+## Open questions
+
+- **The detail of an error answer.** An interface may add a detail message
+  to an error's body (above), but nothing says yet how a `.proto` declares
+  it, and the generated code sends errors without one. A proposal: one
+  common message, `pnut.Error` (a code and a short text), whose largest
+  encoding every method's answer room counts.
