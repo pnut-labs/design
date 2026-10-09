@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-09-28
-- **Last changed:** 2026-09-28
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -91,8 +91,21 @@ Our commits in the forks stay separable:
 - **With `Assisted-by:`** in NuttX's form when made with AI tools
   (`Assisted-by: AGENT_NAME:MODEL_VERSION`).
 - **`Signed-off-by:` only by a person**, never by a tool.
-- Pull requests to the forks are **merged by rebase**, so the commits stay
-  separate. (design and pnut-os squash each pull request into one commit.)
+- **A pull request to a fork is one change,** squashed into one commit
+  when it merges, as in design and pnut-os; the forks keep the branch.
+
+### Fixes found by pnut-os
+
+A bug in NuttX found by pnut-os, by its tests in the simulator or on a
+device, is fixed in the fork:
+
+- **in a pull request of its own,** named for what it fixes
+  (`net/local: …`), saying what failed and how it was found;
+- **the test that found it stays in pnut-os,** and runs against every fork
+  commit pnut-os moves to ([RFC 0022](0022-build.md)): the forks' own
+  checks only build;
+- **a fix that upstream already has** is picked from there instead
+  (above).
 
 ### Offering changes upstream
 
