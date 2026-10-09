@@ -168,11 +168,12 @@ interface's own numbers, listed as an enum in its `.proto`; 0 means none.
 Its `text` is short, at most 63 bytes; a longer one is cut at a
 character's start. The code tells programs which error of the status's
 kind it was; the text is for the log and developers, never shown on a
-screen, where text is translated (RFC 0017), and never carries the user's
-data (RFC 0026). A server gives it with the generated `*_fail()`; a
-caller's handler receives it beside the status, when the server gave one.
-A detail that does not decode is dropped, and the status stands. Every
-method's room for its answer (below) counts it.
+screen, where text is translated ([RFC 0017](0017-i18n.md)), and never
+carries the user's data ([RFC 0026](0026-log.md)). A server gives it with
+the generated `*_fail()`; a caller's handler receives it beside the
+status, when the server gave one. A detail that does not decode is
+dropped, and the status stands. Every method's room for its answer
+(below) counts it.
 
 ### Services
 
