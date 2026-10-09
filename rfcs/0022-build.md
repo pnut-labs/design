@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-08
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -67,6 +67,25 @@ A **top-level `Makefile`** in `pnut-os` is the one entry point:
 | `make <target> run` | builds the image and runs it: the simulator's on the computer, QEMU's in QEMU |
 | `make test` | runs the unit and system tests (below) |
 | `make style` | runs `nxstyle` on pnut-os's code |
+
+### What the build fetches
+
+- **Everything the build downloads is pinned** to a version and checked
+  against a SHA-256 before it is used: nanopb
+  ([RFC 0023](0023-service-library.md)), Espressif's toolchain in CI, and
+  whatever comes next. A download that fails the check stops the build.
+- **A nuttx-apps package that downloads its own copy** (nanopb, cmocka) is
+  handed the checked one instead: the build puts a link where the package
+  unpacks it, and the package then skips its download. The fork stays as
+  upstream has it.
+- **What the build makes** (the generated code of RFC 0023, the fetched
+  sources, test programs) goes in `build/`, and is never committed.
+- **Generating the interfaces' code** needs `protoc` and Python's protobuf
+  module on the computer, as Kconfig needs Python's kconfiglib; the
+  container image (below) has them.
+
+cmocka is still downloaded by nuttx-apps unchecked; it is to be fetched
+the same way.
 
 ### Targets
 
