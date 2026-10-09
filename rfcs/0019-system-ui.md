@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-05
-- **Last changed:** 2026-10-06
+- **Last changed:** 2026-10-09
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -87,6 +87,28 @@ device may lack either.
 - **Text is entered through the system UI,** which owns keyboard layouts,
   letters with diacritics, and an on-screen keyboard on devices without
   keys; apps receive the text.
+
+### Keys and chords
+
+A keyboard driver delivers characters as printed on the keys, and tells
+which modifiers are in effect ([RFC 0024](0024-board.md)); what a key or a
+chord means on screen is the system UI's, the same in every app. Input
+([RFC 0027](0027-input.md)) brings the keys to it, repeated when held.
+
+| Keys | Meaning |
+|---|---|
+| **Function keys,** three | the options, the primary action, back, left to right |
+| **Function keys,** two | the options, back; the primary action is Enter or the navigation's centre |
+| **Enter** | the primary action |
+| **Alt and Enter** | the options |
+| **Alt and Backspace** | back |
+| **Space; Shift and Space** | the next page; the previous one |
+| **Find** (Sym on some keyboards) | find, in the screen's list |
+
+- **A chord counts the modifier in effect,** however it came to be: held,
+  tapped before the key, or locked.
+- **The rest of the keyboard's map** (moving between items, the letters
+  of commands) is the visual design's, kept with it.
 
 ### Apps' screens
 
