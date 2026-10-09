@@ -78,7 +78,7 @@ the device:
 
 | Kind | Described with |
 |---|---|
-| **Keyboard** | its layout: the characters printed on each key, in layers (plain, Shift, and the others its keys show, such as Alt) |
+| **Keyboard** | its layout: the characters printed on each key, in layers (plain, Shift, and the others its keys show, such as Alt); the key given the Find role; and, where it does not use the system UI's suggested steering, its own (RFC 0019) |
 | **Function keys** | how many, and where: keys whose meaning the screen shows above or beside them, as a classic phone's soft keys |
 | **Navigation** | arrow keys, a joystick, a trackball, a wheel |
 | **Buttons** | power, volume and the other buttons, each with its role |
