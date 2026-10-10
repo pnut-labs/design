@@ -159,6 +159,18 @@ Besides these, the manager starts NuttX's own programs: `pppd`, `adbd` and
 NSH. A service whose hardware a device lacks is not started, and its
 program runs without it.
 
+The table is in the firmware, as `/etc/pnut/programs`: one line per
+program, its name as the manager knows it, then the services it runs,
+named as their settings' owner (RFC 0025). A service is one program's.
+Settings lets a program reach only its services' settings, so moving a
+service to another program is a change of this table alone.
+
+```
+# program     services
+system        states settings power time notifications log board
+telephony     telephony
+```
+
 - **Telephony runs alone.** It is the most complex service and the most
   exposed to the outside world (network events, the contents of SMS), and
   calls must keep working when something else fails.
