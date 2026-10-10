@@ -161,7 +161,8 @@ program runs without it.
 
 The table is in the firmware, as `/etc/pnut/programs`: one line per
 program, its name as the manager knows it, then the services it runs,
-named as their settings' owner (RFC 0025). A service is one program's.
+named as their settings' owner ([RFC 0025](0025-settings.md)). A service
+is one program's.
 Settings lets a program reach only its services' settings, so moving a
 service to another program is a change of this table alone.
 

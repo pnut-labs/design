@@ -115,14 +115,14 @@ logged, the system UI shows it as dots, and only its owner reads it.
 
 | Who | May |
 |---|---|
-| a service | read and write its own settings, and register their schema |
+| a service | read and write its own settings, and register its schema |
 | an app | read and write its own, through the runtime |
 | the system UI | read and write every setting, through the schema |
 | anyone | read a setting marked **public**: the language and the region, 12 or 24 hours, and the like |
 
 A service is known by the program that calls: Service states says which
-program a task is, and `/etc/pnut/programs` which services it runs (RFC
-0006, RFC 0007). The system UI owns settings of its own too, as the
+program a task is, and `/etc/pnut/programs` which services it runs
+([RFC 0006](0006-manager.md), RFC 0007). The system UI owns settings of its own too, as the
 service `ui`. Any other caller is refused with an error that says so;
 one whose program cannot be told now is answered "unavailable", to try
 again.
@@ -139,7 +139,7 @@ again.
 
 Settings runs in the system program (RFC 0007) and is among the first
 services ready: most others wait for it
-([RFC 0006](0006-manager.md)). Its own state is the schemas and the
+(RFC 0006). Its own state is the schemas and the
 values.
 
 ### Starting values

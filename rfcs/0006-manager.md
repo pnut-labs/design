@@ -145,9 +145,11 @@ each call with the app's identity (RFC 0004).
   refused; `nxinit` is not asked again for a second.
 - **Starting and stopping services** through the module is for the system
   UI and the system program only. `nxinit`'s socket itself checks no
-  caller; the flat build makes no stronger promise (RFC 0014).
+  caller; the flat build makes no stronger promise
+  ([RFC 0014](0014-security.md)).
 - **A program says which services it runs** in a table in `/etc`,
-  `pnut/programs` (RFC 0007), which the module reads at start.
+  `pnut/programs` ([RFC 0007](0007-services.md)), which the module reads
+  at start.
 
 ### What the manager does not do
 

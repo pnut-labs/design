@@ -54,7 +54,7 @@ Named as on Linux, with the Filesystem Hierarchy Standard's meanings:
 | Path | What | Where |
 |---|---|---|
 | `/bin` | native programs built into the firmware | the firmware |
-| `/etc` | the firmware's configuration: `init.rc`, `pnut/programs` (which services each program runs, RFC 0007), `apps/defaults` (RFC 0008), default settings, the project's key (RFC 0009) | the firmware, read-only |
+| `/etc` | the firmware's configuration: `init.rc`, `pnut/programs` (which services each program runs, [RFC 0007](0007-services.md)), `apps/defaults` (RFC 0008), default settings, the project's key (RFC 0009) | the firmware, read-only |
 | `/usr/lib/apps/<id>` | built-in WebAssembly apps | the firmware, read-only |
 | `/usr/share` | fonts, icons, themes, translations | the firmware, read-only |
 | `/opt/<id>` | the package store: installed apps (RFC 0009) | internal flash, read-only |
