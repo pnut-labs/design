@@ -133,6 +133,22 @@ the module which program it is, once per connection: a connection's caller
 does not change while it is open. For WebAssembly apps, the runtime marks
 each call with the app's identity (RFC 0004).
 
+- **A task the watch has not shown yet,** such as a program whose first
+  call comes before `nxinit`'s event about it, is asked of `nxinit`
+  directly (`who <task>`), waiting a second at most.
+- **A task `nxinit` does not know** is no program: the caller is a
+  stranger, and is remembered as one. Only a caller's own task is
+  remembered so: a task another program names may not exist yet, and may
+  be one of a program about to start.
+- **When `nxinit` cannot tell,** the caller is unknown for now, and its
+  call is answered "unavailable", to be tried again, neither allowed nor
+  refused; `nxinit` is not asked again for a second.
+- **Starting and stopping services** through the module is for the system
+  UI and the system program only. `nxinit`'s socket itself checks no
+  caller; the flat build makes no stronger promise (RFC 0014).
+- **A program says which services it runs** in a table in `/etc`,
+  `pnut/programs` (RFC 0007), which the module reads at start.
+
 ### What the manager does not do
 
 - **WebAssembly apps** run inside the runtime, which looks after them
