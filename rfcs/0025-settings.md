@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-09
+- **Last changed:** 2026-10-16
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -66,6 +66,16 @@ Each setting carries its default, a label and a group, translated
 | a service | a schema generated with its interface from its `.proto` file ([RFC 0023](0023-service-library.md)) | at start-up |
 | an app | the schema in its manifest | at install (RFC 0009) |
 
+A service declares its settings in its `.proto` file as a message, one for
+each owner, each field a setting with its options: range, default, label,
+group, unit, choices, public, and a key when it is not the field's name.
+The generator writes the schema the service registers, and typed access:
+the message's own struct holds the values, which the service library
+reads again when the settings topic announces a change. The service
+reads plain fields; a change goes to Settings and comes back through the
+topic. Secrets are not in the struct yet: Settings neither lists nor
+sets their values until it can encrypt them (below).
+
 When a new version of a service or app changes its schema, added
 settings take their defaults, removed ones lose their values, and a
 setting whose type changed is treated as removed and added.
@@ -77,6 +87,12 @@ the firmware's defaults file: written as `configs/<target>/defaults.toml`
 ([RFC 0022](0022-build.md)) and compiled into `/etc` with the rest of the
 firmware's configuration (RFC 0010). So one service or app can start
 with different values on different devices.
+
+The build checks each default against its owner's schema (so far only
+services' schemas are there to check against) and writes the file as a
+Protocol Buffers message, `/etc/pnut/defaults.pb`. Settings
+reads it once as it starts, and takes a setting's default from it when
+the owner registers its schema, if it fits the declaration.
 
 ### Storage
 
@@ -151,7 +167,7 @@ To be measured:
 | A key | 64 characters |
 | A string | 256 characters |
 | A secret | 1 KB |
-| Settings per owner | 128 |
+| Settings per owner | 128; 64 in a service's typed struct |
 | The wait before a write | 1 s |
 
 ## Alternatives

@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-05
+- **Last changed:** 2026-10-16
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -129,6 +129,30 @@ A part that belongs to a generic service stays with it on every device: an
 antenna switch with Radio, the speaker's source with Audio, the charger's
 settings with Power, each power rail with the service whose part it feeds,
 keys and touch with the system UI.
+
+### Power and a low battery
+
+Power keeps the battery from running down to its protection circuit. On
+battery power, when the gauge reads the battery at or under a cutoff
+voltage several readings in a row, Power stops the system program, which
+writes the settings as it stops, and the board powers off (NuttX's
+`BOARDIOC_POWEROFF`; on the T-Deck Max the charger cuts the cell off, its
+ship mode, which plugging in power should end: not tried yet).
+
+- **In the system program, not the system UI,** so that it acts whether
+  the UI runs or not. The warning the system UI shows before that reads
+  Power's battery state.
+- **Several readings in a row,** so that a dip under a burst of current,
+  a radio sending, does not power the device off. Today the values are
+  the firmware's options (3300 mV, three readings 10 s apart); they move
+  to the device's description ([RFC 0024](0024-board.md)) once Board
+  serves it.
+- **Read on a timer, for now:** against RFC 0004's rule that nothing
+  polls. A reading every 10 s costs little, and the device does not
+  sleep yet; the gauge's own low-battery alert replaces the timer once
+  its driver reports one.
+- **Never on external power,** where the battery charges, and never where
+  the board cannot power off.
 
 ### Packages
 
