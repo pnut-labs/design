@@ -65,3 +65,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0025](0025-settings.md) | Settings | Accepted |
 | [0026](0026-log.md) | Log | Accepted |
 | [0027](0027-input.md) | Input | Accepted |
+| [0028](0028-time.md) | Time | Accepted |
