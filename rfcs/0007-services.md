@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-16
+- **Last changed:** 2026-10-29
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -144,9 +144,9 @@ ship mode, which plugging in power should end: not tried yet).
   Power's battery state.
 - **Several readings in a row,** so that a dip under a burst of current,
   a radio sending, does not power the device off. Today the values are
-  the firmware's options (3300 mV, three readings 10 s apart); they move
-  to the device's description ([RFC 0024](0024-board.md)) once Board
-  serves it.
+  the firmware's options (3300 mV, three readings 10 s apart); they are
+  to move to the device's description ([RFC 0024](0024-board.md)), which
+  Board serves now.
 - **Read on a timer, for now:** against RFC 0004's rule that nothing
   polls. A reading every 10 s costs little, and the device does not
   sleep yet; the gauge's own low-battery alert replaces the timer once
