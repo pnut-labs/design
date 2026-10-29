@@ -89,9 +89,9 @@ The description comes from two sources, which Board merges and serves:
 
 - **The clock that keeps time in sleep** is a part too, with its rate as
   measured on that kind of device: Time's starting value until it has
-  learnt the unit's own ([RFC 0028](0028-time.md)). No file gives one
-  yet: the T-Deck Max's rate is to be measured again first, and its
-  reader comes with Time.
+  learnt the unit's own ([RFC 0028](0028-time.md)). The T-Deck Max's
+  file gives 107 ppm of the time slept, as measured on 2026-10-29, and
+  Time reads it.
 - **A modem's bands** are listed whatever their number: LTE's as a set
   of bits, one a band, with no ceiling on a band's number; GSM's by name
   (GSM 850 and 900, DCS 1800, PCS 1900).
