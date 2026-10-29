@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-09
+- **Last changed:** 2026-10-29
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -51,24 +51,58 @@ The description comes from two sources, which Board merges and serves:
 | **The target's file** | what the firmware was built for: the model, the hardware and its parameters, the limits | `configs/<target>/board.toml` ([RFC 0022](0022-build.md)), compiled to Protocol Buffers by the build, as a manifest is (RFC 0008), and placed in `/etc` with the firmware's other configuration (RFC 0010) |
 | **Device data** | what differs per unit: the serial number, the hardware revision, calibration | the device data partition, read at start-up (below) |
 
-- **The schema** is a `.proto` file in `proto/`
+- **The schema** is `proto/pnut/board.proto`
   ([RFC 0005](0005-communication.md)), and it **enumerates the hardware
   kinds** (`lora`, `gnss`, `modem`, `nfc`, `camera`, …), so apps'
   manifests and devices' descriptions use the same names. A kind, once
-  numbered, is never renumbered.
+  numbered, is never renumbered. The kinds are numbered in groups, so
+  that a later kind fits beside its group: from 1, screens, input and
+  lights; from 16, radios; from 32, sound, motion, sensors and cameras;
+  from 48, power, storage, ports and clocks.
+- **Each part** has its kind, a name among the parts of its kind
+  ("screen", "keyboard"), its chip or module, its device file if it has
+  one, and at most one detail: its parameters. A service asks Board where
+  its part is, rather than having a path built into it.
 - **Several of a kind** are allowed: two SIM slots, two screens.
+- **The build checks the target's file** against the schema, nanopb's
+  sizes included, and refuses the unit's own fields (the serial number,
+  the revision, whether it is provisioned), which only device data gives.
+  It names the build's target itself, and refuses two parts of a kind
+  under one name. It writes `/etc/pnut/board.pb`. Every target has a
+  file.
+- **The description fits one message,** and is read whole with one
+  request: with up to 32 parts it is at most about 3.6 KB.
 - **The description does not change while the device runs;** readers ask
   once and keep it.
 - **The simulator and QEMU targets** have descriptions of their own
-  (RFC 0022): a window for a screen, no radios, and so on.
+  (RFC 0022), so far their identity alone. Each describes what its build
+  has: the simulator's has no screen until its build has a window for
+  one.
 
 ### What it holds
 
 | Part | For example |
 |---|---|
-| **Identity** | the model, the hardware revision, the serial number |
+| **Identity** | the maker, the model, the build's target; the hardware revision, the serial number |
 | **Hardware present,** each with its parameters | radios and their bands; the screen's kind, size and depth; inputs (keyboard, touch, keys); sensors; audio parts; cameras; the modem's bands and SIM slots; internal flash and its partitions (RFC 0010); external storage slots; the USB port's possible modes (RFC 0012) |
 | **Limits for this device** | the apps' memory budget (RFC 0008); Storage's limits (RFC 0011); Network's (RFC 0015); Notifications' (RFC 0020); and others as RFCs add them |
+
+- **The clock that keeps time in sleep** is a part too, with its rate as
+  measured on that kind of device: Time's starting value until it has
+  learnt the unit's own ([RFC 0028](0028-time.md)). The T-Deck Max's
+  file gives 107 ppm of the time slept, as measured on 2026-10-29, and
+  Time reads it.
+- **A modem's bands** are listed whatever their number: LTE's as a set
+  of bits, one a band, with no ceiling on a band's number; GSM's by name
+  (GSM 850 and 900, DCS 1800, PCS 1900).
+- **A battery** has its capacity, the voltage it is charged to, and the
+  one the device powers off at. The kernel sets the charger, and tells
+  the gauge the capacity, before any program runs, from the board's code,
+  so the charge voltage and the capacity are in both places, and they
+  must agree.
+- **Not in it yet:** the flash's partitions, the radio details of Wi-Fi
+  and Bluetooth, and the limits. Each limit comes with the service that
+  reads it.
 
 ### Inputs
 
@@ -86,6 +120,10 @@ the device:
 
 A device may have any of them, or few: one is touch-only, another
 keys-only.
+
+So far a keyboard is described by its layout's name and its number of
+keys, and function keys by their number; the characters on the keys, the
+Find key and the steering are to be added with input (RFC 0027).
 
 ### Keyboards
 
@@ -117,7 +155,10 @@ that input works alike on every keyboard:
 | diagnostics and developer tools | all of it |
 
 A service asks Board rather than assuming a device, so the same service
-runs on every device.
+runs on every device. Power takes the voltage it powers off at from the
+battery's part; its gauge's and charger's device files are still built
+in (the firmware's options), and are to come from the battery's and the
+charger's parts.
 
 ### Device data
 
@@ -140,6 +181,11 @@ runs on every device.
   whose device data was damaged. Board marks the description as
   unprovisioned, which the About screen and developer tools show; what
   needs per-unit data falls back to the target's defaults.
+- **No device's partition is in use yet.** The T-Deck Max's flash
+  layout reserves one (RFC 0010), but the firmware has no device for it
+  and nothing has written it, and its board code reports no unique id
+  (`BOARDIOC_UNIQUEID`); so every unit is described as unprovisioned,
+  from the target's file alone.
 
 ### The parts Board owns
 
@@ -161,6 +207,11 @@ Board runs in the system program and is never optional (RFC 0007). Its
 interface offers the description and device data's records as requests,
 and the backlights, lights and the USB port's mode as requests and
 events; the privacy switches and the port's state are topics.
+
+So far it serves the description alone. It is the first module the system
+program starts, so that the others can ask it. Without a description, or
+with one that does not decode, it answers that it has none, and the
+program goes on.
 
 ## Alternatives
 

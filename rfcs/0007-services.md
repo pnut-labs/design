@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-16
+- **Last changed:** 2026-10-29
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -143,16 +143,18 @@ ship mode, which plugging in power should end: not tried yet).
   the UI runs or not. The warning the system UI shows before that reads
   Power's battery state.
 - **Several readings in a row,** so that a dip under a burst of current,
-  a radio sending, does not power the device off. Today the values are
-  the firmware's options (3300 mV, three readings 10 s apart); they move
-  to the device's description ([RFC 0024](0024-board.md)) once Board
-  serves it.
+  a radio sending, does not power the device off. The voltage is the
+  battery's power-off voltage in the device's description
+  ([RFC 0024](0024-board.md)), 3300 mV on the T-Deck Max; the readings,
+  three 10 s apart, are the firmware's options.
 - **Read on a timer, for now:** against RFC 0004's rule that nothing
   polls. A reading every 10 s costs little, and the device does not
   sleep yet; the gauge's own low-battery alert replaces the timer once
   its driver reports one.
-- **Never on external power,** where the battery charges, and never where
-  the board cannot power off.
+- **Never on external power,** where the battery charges; never where
+  the board cannot power off; and never where the description gives the
+  battery no power-off voltage (no description, no battery, or none
+  given).
 
 ### Packages
 
