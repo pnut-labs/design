@@ -155,9 +155,10 @@ that input works alike on every keyboard:
 | diagnostics and developer tools | all of it |
 
 A service asks Board rather than assuming a device, so the same service
-runs on every device. So far Power still has its power-off voltage, and
-its gauge's and charger's device files, built in (the firmware's options);
-it is to take them from the battery's and the charger's parts.
+runs on every device. Power takes the voltage it powers off at from the
+battery's part; its gauge's and charger's device files are still built
+in (the firmware's options), and are to come from the battery's and the
+charger's parts.
 
 ### Device data
 
