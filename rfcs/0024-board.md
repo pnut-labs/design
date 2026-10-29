@@ -156,9 +156,8 @@ that input works alike on every keyboard:
 
 A service asks Board rather than assuming a device, so the same service
 runs on every device. Power takes the voltage it powers off at from the
-battery's part; its gauge's and charger's device files are still built
-in (the firmware's options), and are to come from the battery's and the
-charger's parts.
+battery's part, and reads the battery through the device files of the
+battery's and the charger's parts.
 
 ### Device data
 

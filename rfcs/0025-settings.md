@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-16
+- **Last changed:** 2026-10-29
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -134,6 +134,7 @@ logged, the system UI shows it as dots, and only its owner reads it.
 | a service | read and write its own settings, and register its schema |
 | an app | read and write its own, through the runtime |
 | the system UI | read and write every setting, through the schema |
+| a command typed in the developer's shell ([RFC 0012](0012-developer-access.md)) | the same as the system UI |
 | anyone | read a setting marked **public**: the language and the region, 12 or 24 hours, and the like |
 
 A service is known by the program that calls: Service states says which
@@ -142,6 +143,17 @@ program a task is, and `/etc/pnut/programs` which services it runs
 service `ui`. Any other caller is refused with an error that says so;
 one whose program cannot be told now is answered "unavailable", to try
 again.
+
+A task that is no program is known by the nearest program among its
+parents: Service states follows its parent, then the parent's, four
+steps at most. A command typed in a shell is the shell's. The shells are
+the console's NSH and, for `adb shell`, adb's daemon: NxInit's services
+`console` and `adbd`, named by a firmware option. A task started by any
+other program is a stranger, with the public settings only. In the flat
+build this check keeps the rules; it keeps no native code out
+([RFC 0002](0002-build-mode.md)), and the shell has full rights anyway
+(RFC 0012). The shell's first command is `settings`: `list`, `get`,
+`set` and `reset`.
 
 ### Reset and backup
 
