@@ -1,6 +1,6 @@
 # RFC 0030: Telephony
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-30
 - **Last changed:** 2026-10-30
@@ -29,7 +29,7 @@ This RFC covers all of it, and the order it is built in.
   - [RFC 0028](0028-time.md) takes its best time from the modem's
     network, on the `network_time` topic, which nothing publishes yet.
     Without a time source, Time cannot learn the sleep clock's rate.
-  - Messages (RFC 0029, proposed alongside) expects Telephony to be its
+  - Messages ([RFC 0029](0029-messages.md)) expects Telephony to be its
     `sms` transport.
 - **The previous system had all of it** ([current/](../current/)): modemd,
   about 7000 lines in the old code. It had:
@@ -229,8 +229,8 @@ mobile data need it. Telephony multiplexes it with 3GPP 27.010
   - DTR.
 
   Power already reads its battery's files from Board's description
-  (pnut-os #39; RFC 0024 as amended by design #52). Until the schema
-  changes, the four lines are firmware options.
+  (pnut-os #39; RFC 0024). Until the schema changes, the four lines are
+  firmware options.
 - **The ring indicator wakes the processor** for a call or an SMS, so the
   device light-sleeps with the modem registered. The rail does not hold
   the processor awake; the UART keeps it awake while in use. Measured
