@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-09
+- **Last changed:** 2026-10-30
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -68,7 +68,11 @@ will teach. Two kinds of things are in it:
   every module has said it is ready; a module that depends on another
   service waits for its state on the Service states topic.
 - **Stopping:** nxinit's `SIGTERM` arrives on the loop as an event
-  (`signalfd`); the library tells every module, then exits.
+  (`signalfd`). A module with work that has to end in order first, such
+  as a modem powered down ([RFC 0030](0030-telephony.md)), says so, and
+  the loop runs on until it has finished, or for the program's finish
+  time, which stays under nxinit's gentle kill time; then the library
+  stops every module, and exits.
 
 ### The loop
 

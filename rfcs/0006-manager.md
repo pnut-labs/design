@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-29
+- **Last changed:** 2026-10-30
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -141,6 +141,11 @@ each call with the app's identity (RFC 0004).
   remembered so, and its parents when the module looks for the program
   that started it ([RFC 0025](0025-settings.md)): a task another program
   names may not exist yet, and may be one of a program about to start.
+- **A command typed in a developer's shell** is no program's. A
+  service in another program asks the module (`Who`), which answers it
+  as the shell's: no program, and a mark that a shell started it, by
+  RFC 0025's rule. Telephony lets such a caller do what the system UI
+  may ([RFC 0030](0030-telephony.md)).
 - **When `nxinit` cannot tell,** the caller is unknown for now, and its
   call is answered "unavailable", to be tried again, neither allowed nor
   refused; `nxinit` is not asked again for a second.

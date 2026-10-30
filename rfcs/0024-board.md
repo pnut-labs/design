@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-29
+- **Last changed:** 2026-10-30
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -100,6 +100,13 @@ The description comes from two sources, which Board merges and serves:
   the gauge the capacity, before any program runs, from the board's code,
   so the charge voltage and the capacity are in both places, and they
   must agree.
+- **A part's control lines,** such as a modem's supply, power key, ring
+  indicator and DTR, are listed apart from the parts. Each names its
+  part by kind and name, its role and its device file. A part is sized
+  for the largest of its kinds, so four device files in the modem's own
+  would have made the largest description too big for one answer (4080
+  bytes, [RFC 0023](0023-service-library.md)). The T-Deck Max lists its
+  modem's four ([RFC 0030](0030-telephony.md)).
 - **Not in it yet:** the flash's partitions, the radio details of Wi-Fi
   and Bluetooth, and the limits. Each limit comes with the service that
   reads it.
@@ -194,6 +201,7 @@ battery's and the charger's parts.
 | **Lights** (status, notification) | drives them: a colour and on-and-off timings | Notifications asks for a pattern (RFC 0020); Power for charging |
 | **Privacy switches** (microphone, camera) | publishes their state on a topic | the services concerned obey: Audio mutes, Camera stops |
 | **The USB port** | switches it between its modes, and publishes whether it is connected and in which mode | the system UI asks the owner which mode (RFC 0012) |
+| **Airplane mode** (every radio off the air) | keeps it as a public setting of its own, `board.airplane`, and publishes it on the `airplane_mode` topic once its settings are read, and at each change | the system UI switches it through Settings; each radio's owner obeys (Telephony with `AT+CFUN=4`) |
 
 **The rule** stays RFC 0007's: a part goes to Board only when no generic
 service owns parts of its kind. An antenna switch is Radio's, a speaker's
@@ -205,12 +213,13 @@ whose part it feeds, keys and touch the system UI's.
 Board runs in the system program and is never optional (RFC 0007). Its
 interface offers the description and device data's records as requests,
 and the backlights, lights and the USB port's mode as requests and
-events; the privacy switches and the port's state are topics.
+events; the privacy switches, airplane mode and the port's state are
+topics.
 
-So far it serves the description alone. It is the first module the system
-program starts, so that the others can ask it. Without a description, or
-with one that does not decode, it answers that it has none, and the
-program goes on.
+So far it serves the description, and keeps airplane mode. It is the
+first module the system program starts, so that the others can ask it.
+Without a description, or with one that does not decode, it answers that
+it has none, and the program goes on.
 
 ## Alternatives
 
