@@ -96,10 +96,11 @@ Then:
 - **Delivering.**
   - A transport hands Messages a message it received: the peer, the
     sender if any, the text, the time it was sent, and a key.
-  - The key names the message on its network: for an SMS, the sender,
-    the network's time stamp and, for a long one, its reference. Messages
-    stores a message once for each key, so a delivery repeated after a
-    reset is not stored twice.
+  - The key names the message on its network. For an SMS it is the
+    sender, the network's time stamp (a long one's first part's), a long
+    one's reference, and a hash of the text, since one sender can send
+    two messages in the same second. Messages stores a message once for
+    each key, so a delivery repeated after a reset is not stored twice.
   - Messages has the message on flash before it answers. Only then does
     the transport let go of it: Telephony deletes the SMS from the
     modem after that answer, not before.
