@@ -147,7 +147,7 @@ again.
 A task that is no program is known by the nearest program among its
 parents: Service states follows its parent, then the parent's, four
 steps at most. A command typed in a shell is the shell's. The shells are
-the console's NSH and, for `adb shell`, adb's daemon: NxInit's services
+the console's NSH and, for `adb shell`, adb's daemon: `nxinit`'s services
 `console` and `adbd`, named by a firmware option. A task started by any
 other program is a stranger, with the public settings only. In the flat
 build this check keeps the rules; it keeps no native code out
