@@ -106,8 +106,8 @@ This RFC covers all of it, and the order it is built in.
   privacy switches (RFC 0024); the system UI only switches it. Telephony
   obeys it with `AT+CFUN=4`: the modem stays powered, off the air, and
   comes back quickly. A call under way ends; queued SMS wait; the SIM
-  and its PIN are still reachable. Which module of the system program
-  keeps it is an open question.
+  and its PIN are still reachable. Board keeps it, beside the privacy
+  switches.
 
 ### The modem's line
 
@@ -466,5 +466,3 @@ number.
   now, as proposed, or keep them firmware options for now.
 - **The multiplexer:** Telephony's own on its loop, as proposed; or
   NuttX's, rewritten in the fork to go upstream.
-- **Airplane mode's keeper** in the system program: Board, beside the
-  privacy switches, or Power.
