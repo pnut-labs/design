@@ -209,8 +209,10 @@ mobile data need it. Telephony multiplexes it with 3GPP 27.010
   - registration reports (`AT+CREG=2`, `AT+CEREG=2`);
   - the network's time (`AT+CTZU=1`, and its reports);
   - the ring indicator for SMS too (`AT+CFGRI=1`);
-  - airplane mode (`AT+CFUN`), which the A7682E keeps across a power
-    cycle (seen on 2026-10-30);
+  - airplane mode (`AT+CFUN=4`), given again once the SIM is ready, and
+    whenever the modem reports itself on the air in it: the A7682E starts
+    off the air and goes on by itself once its SIM is ready (seen on
+    2026-10-30);
   - the caller's number shown and sent (`AT+CLIP`, `AT+CLIR`), once the
     SIM's phone book is read (`PB DONE`).
 - **A SIM is read at each start of the modem.** The SIM and the memory
