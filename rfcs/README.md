@@ -67,3 +67,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0027](0027-input.md) | Input | Accepted |
 | [0028](0028-time.md) | Time | Accepted |
 | [0029](0029-messages.md) | Messages | Accepted |
+| [0030](0030-telephony.md) | Telephony | Accepted |
