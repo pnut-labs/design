@@ -103,11 +103,12 @@ This RFC covers all of it, and the order it is built in.
 - **Airplane mode** belongs to the whole device, not to Telephony, and
   no service may depend on the system UI (RFC 0004). So the system
   program keeps it and publishes it on a topic, as Board publishes the
-  privacy switches (RFC 0024); the system UI only switches it. Telephony
-  obeys it with `AT+CFUN=4`: the modem stays powered, off the air, and
-  comes back quickly. A call under way ends; queued SMS wait; the SIM
-  and its PIN are still reachable. Board keeps it, beside the privacy
-  switches.
+  privacy switches ([RFC 0024](0024-board.md)); the system UI only
+  switches it. Telephony obeys it with `AT+CFUN=4`: the modem stays
+  powered, off the air, and comes back quickly. A call under way ends;
+  queued SMS wait; the SIM and its PIN are still reachable. Board keeps
+  it, beside the privacy switches.
+
 
 ### The modem's line
 
@@ -220,9 +221,9 @@ mobile data need it. Telephony multiplexes it with 3GPP 27.010
 
 ### Power and its lines
 
-- **Its control lines come from Board's description**
-  ([RFC 0024](0024-board.md)). A part has one device file, so the
-  modem's part, besides its UART, gains four:
+- **Its control lines come from Board's description** (RFC 0024). A
+  part has one device file, so the modem's part, besides its UART, gains
+  four:
   - the rail;
   - the power key;
   - the ring indicator;
