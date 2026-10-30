@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-05
-- **Last changed:** 2026-10-05
+- **Last changed:** 2026-10-30
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -190,7 +190,13 @@ to be measured:
 - **Every read and write crosses programs and is copied** into the app's
   memory, so large files are slow.
 - **SQLite's speed on a memory card** has not been measured. On internal
-  flash, the previous system measured 2–4.5 s for each commit on littlefs.
+  flash, the previous system measured 2–4.5 s for each commit on
+  littlefs. On 2026-10-30, a commit there took about as long as
+  rewriting the whole database: littlefs copies everything after a
+  change in the middle of a file, and SQLite changes its first page at
+  each commit. A delivery into an empty store took 3.7 s, and 12 s at
+  230 KB ([RFC 0029](0029-messages.md)). An app's database on littlefs
+  slows the same way as it grows.
 - **A service handed a file uses it beyond the runtime's checks;** it is
   native, and trusted (RFC 0002).
 - **A fault in Storage stops apps' storage** until the manager restarts it;
