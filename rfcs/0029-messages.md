@@ -1,6 +1,6 @@
 # RFC 0029: Messages
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-30
 - **Last changed:** 2026-10-30
@@ -27,7 +27,7 @@ weighs that against the alternatives.
   - how a transport delivers into it, or takes what is to be sent;
   - how big it may grow, and how fast it writes;
   - who may read it.
-- **Telephony's SMS needs it first** (RFC 0030, proposed alongside). An
+- **Telephony's SMS needs it first** ([RFC 0030](0030-telephony.md)). An
   SMS the modem has received has to land somewhere that survives a
   restart before the modem lets go of it.
 - **The previous system had the same shape** ([current/](../current/)):
@@ -154,8 +154,7 @@ Then:
     permissions are named in Messages' `.proto` (RFC 0005); this RFC
     fixes what each allows.
   - **A command typed in the developer's shell** may do what the system
-    UI may, by the rule design #52 proposes for RFC 0025 (Open
-    questions).
+    UI may, by the rule for the shell in [RFC 0025](0025-settings.md).
 - **Notifications.** Once Notifications exists, Messages posts one
   notification for each conversation with unread messages, in a group of
   its own ([RFC 0020](0020-notifications.md)). It clears it when the
@@ -318,9 +317,6 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
   proposed; or a bigger system partition while the package store is
   still empty, since resizing it later means moving data: in practice a
   factory reset (RFC 0010).
-- **The shell's rights:** the `messages` command does what the system UI
-  may only once design #52's rule is accepted. Without it, a command is
-  a stranger, and reads nothing private.
 - **Starting an app to send:** how Messages has the runtime start an app
   whose transport has queued messages, which RFC 0008 does not provide
   yet.
