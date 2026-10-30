@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-03
+- **Last changed:** 2026-10-29
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -138,8 +138,9 @@ each call with the app's identity (RFC 0004).
   directly (`who <task>`), waiting a second at most.
 - **A task `nxinit` does not know** is no program: the caller is a
   stranger, and is remembered as one. Only a caller's own task is
-  remembered so: a task another program names may not exist yet, and may
-  be one of a program about to start.
+  remembered so, and its parents when the module looks for the program
+  that started it ([RFC 0025](0025-settings.md)): a task another program
+  names may not exist yet, and may be one of a program about to start.
 - **When `nxinit` cannot tell,** the caller is unknown for now, and its
   call is answered "unavailable", to be tried again, neither allowed nor
   refused; `nxinit` is not asked again for a second.

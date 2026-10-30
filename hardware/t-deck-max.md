@@ -1,7 +1,7 @@
 # LilyGo T-Deck Max
 
 - **Status:** draft
-- **Last changed:** 2026-09-28
+- **Last changed:** 2026-10-30
 
 The device pnut-os runs on today, described for the people designing the
 system: what it has, how the parts are connected, what was measured, and
@@ -95,7 +95,12 @@ flowchart LR
   once (measured 2026-09-26 to 2026-09-28).
 - **PSRAM**, 8 MB, is the rest of the working memory: about 0.9 MB is used
   with the whole system running (2026-09-27).
-- **Flash**, 16 MB, is split **4 / 4 / 1 / 7 MB**.
+- **Flash**, 16 MB: two **4 MB** firmware slots, with room for a
+  bootloader (128 KB) and its 256 KB scratch area; **64 KB** for the
+  device's own data; the **2 MB** system partition, a littlefs at
+  `/var/lib`; and **5.5 MB** for the package store. The device data and
+  the package store are not used yet. The offsets are in the board's NuttX
+  documentation.
 - **microSD** for bulk data.
 
 ## Power
@@ -110,13 +115,30 @@ Measured on battery, with the fuel gauge, which reports whole milliamps.
 | Light sleep with LoRa listening (MeshCore) | 13 mA | 2026-09-26 |
 | The modem on and idle on LTE | about 48 mA (about 1.2 days) | 2026-09-26 |
 | The modem on and asleep too | 18–20 mA, but see below | 2026-09-26 |
+| The modem on and idle without a SIM: the processor awake, then light-sleeping; the same with the modem asleep too | 60 mA, 35 mA; 31 mA, 5 mA | 2026-10-17 |
 
 - **Light sleep** keeps memory and state, and wakes on timers, keys, touch,
-  the LoRa radio and the modem's ring indicator. It is held off while USB
-  power is present, a backlight is on, the GNSS, modem or amplifier rail is
-  on, or Wi-Fi or Bluetooth has been started.
-- **No 32 kHz crystal:** time asleep is kept by the internal RC oscillator
-  (it gained 1.83 s over 3 h 51 min asleep, +132 ppm; 2026-09-22).
+  the LoRa radio and the modem's ring indicator. On today's firmware it is
+  held off while:
+  - USB power is present;
+  - a light, such as a backlight, is on;
+  - the GNSS rail is on;
+  - audio plays or records;
+  - Wi-Fi has been brought up, until a restart, or Bluetooth runs;
+  - the modem's serial line is in use, and for a second after;
+  - the modem's ring indicator is low, and for 2 s after;
+  - a program holds `/dev/awake`, or console input came in the last 6 s.
+
+  The modem's rail no longer holds it off, as it did before 2026-10-23:
+  the ring indicator is to wake the processor when the modem has
+  something to say. That is not yet tried with a real call or SMS.
+- **No 32 kHz crystal:** time asleep is kept by the internal RC oscillator,
+  which runs fast. It gained +132 ppm of the time slept on 2026-09-22, and
+  +107 ppm with sleeps of at most 2 s on 2026-10-29. The firmware now
+  corrects each light sleep by that rate: about 1 ppm left, give or take
+  3, over 44 minutes of such sleeps. Single sleeps of about 24 s gained
+  about 0.85 % on 2026-10-17, which nobody has explained yet, so the rate
+  is to be measured again if sleeps get longer.
 - The battery, charger and gauge are powered by the cell, so they keep
   their settings across resets of the processor.
 
