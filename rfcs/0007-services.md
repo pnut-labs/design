@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-29
+- **Last changed:** 2026-10-30
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -134,10 +134,14 @@ keys and touch with the system UI.
 
 Power keeps the battery from running down to its protection circuit. On
 battery power, when the gauge reads the battery at or under a cutoff
-voltage several readings in a row, Power stops the system program, which
-writes the settings as it stops, and the board powers off (NuttX's
-`BOARDIOC_POWEROFF`; on the T-Deck Max the charger cuts the cell off, its
-ship mode, which plugging in power should end: not tried yet).
+voltage several readings in a row, Power has the manager stop the other
+programs first, so that each finishes what has to end in order (the
+modem powered down, [RFC 0030](0030-telephony.md)), and waits for them
+12 s at most, longer than `nxinit` waits before it kills one. Then it
+stops the system program, which writes the settings as it stops, and the
+board powers off (NuttX's `BOARDIOC_POWEROFF`; on the T-Deck Max the
+charger cuts the cell off, its ship mode, which plugging in power should
+end: not tried yet).
 
 - **In the system program, not the system UI,** so that it acts whether
   the UI runs or not. The warning the system UI shows before that reads

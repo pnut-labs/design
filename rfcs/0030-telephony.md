@@ -82,7 +82,10 @@ This RFC covers all of it, and the order it is built in.
     Settings' secrets ([RFC 0025](0025-settings.md)), which wait for
     Security ([RFC 0014](0014-security.md)).
 - **Who may.** In this RFC, the system UI and the developer's shell may
-  do everything. Apps come with the runtime's permissions
+  do everything: Service states tells Telephony a command typed in a
+  shell ([RFC 0006](0006-manager.md)). The shell's `telephony` command
+  shows the state, hands over the PIN or the PUK, and passes an AT
+  command through. Apps come with the runtime's permissions
   ([RFC 0008](0008-runtime.md)): placing calls, reading the call state,
   reading a caller's number. Sending SMS is Messages' to allow.
 - **The system interface** ([RFC 0004](0004-layers.md)) is for the
@@ -107,7 +110,8 @@ This RFC covers all of it, and the order it is built in.
   switches it. Telephony obeys it with `AT+CFUN=4`: the modem stays
   powered, off the air, and comes back quickly. A call under way ends;
   queued SMS wait; the SIM and its PIN are still reachable. Board keeps
-  it, beside the privacy switches.
+  it, beside the privacy switches, as a public setting of its own, which
+  the system UI switches through Settings (RFC 0024).
 
 
 ### The modem's line
@@ -205,6 +209,10 @@ mobile data need it. Telephony multiplexes it with 3GPP 27.010
   - registration reports (`AT+CREG=2`, `AT+CEREG=2`);
   - the network's time (`AT+CTZU=1`, and its reports);
   - the ring indicator for SMS too (`AT+CFGRI=1`);
+  - airplane mode (`AT+CFUN=4`), given again once the SIM is ready, and
+    whenever the modem reports itself on the air in it: the A7682E starts
+    off the air and goes on by itself once its SIM is ready (seen on
+    2026-10-30);
   - the caller's number shown and sent (`AT+CLIP`, `AT+CLIR`), once the
     SIM's phone book is read (`PB DONE`).
 - **A SIM is read at each start of the modem.** The SIM and the memory
@@ -229,9 +237,8 @@ mobile data need it. Telephony multiplexes it with 3GPP 27.010
   - the ring indicator;
   - DTR.
 
-  Power already reads its battery's files from Board's description
-  (pnut-os #39; RFC 0024). Until the schema changes, the four lines are
-  firmware options.
+  They are listed in Board's description, each by its part, role and
+  device file (RFC 0024), as Power reads its battery's files there.
 - **The ring indicator wakes the processor** for a call or an SMS, so the
   device light-sleeps with the modem registered. The rail does not hold
   the processor awake; the UART keeps it awake while in use. Measured
@@ -266,11 +273,16 @@ its supply sags under GSM's transmit bursts. So:
 
 - **The readings Time can trust** come from the network's own message
   (`AT+CTZU=1` and its report), stamped by the monotonic clock when the
-  line arrives. Summer time comes from that message.
+  line arrives. Summer time comes from that message. The A7682E reports
+  it with `AT+CTZR=1` (it takes 0 and 1 only), after each attach, as
+  `+CTZV: +04,26/10/30,20:28:28`: the zone in quarter hours, summer time
+  in, and the time in UTC (seen on 2026-10-30).
 - **Hourly readings.** RFC 0028 wants a reading at most hourly while a
   source is cheap. While the modem is registered, and only once the
   network has sent its time since the modem started, Telephony reads the
-  modem's clock (`AT+CCLK?`) at the first wake after the hour. Not every
+  modem's clock (`AT+CCLK?`) on the first of its own events after the
+  hour (a report from the modem, a question answered), so nothing wakes
+  the device for it. Not every
   network sends the time; without it, the modem's clock is whatever it
   started with, and there is no hourly reading.
   - That clock runs on the modem's own crystal since the network last
@@ -463,7 +475,5 @@ number.
   says.
 - **Mobile data before Network:** as proposed, with the host-only
   netmask and its hole; or data waits for Network.
-- **The modem's lines in Board's description:** add them to the schema
-  now, as proposed, or keep them firmware options for now.
 - **The multiplexer:** Telephony's own on its loop, as proposed; or
   NuttX's, rewritten in the fork to go upstream.
