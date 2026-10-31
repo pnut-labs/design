@@ -167,8 +167,10 @@ Then:
 
 - **Files on internal flash, appended to:** a log for each conversation,
   in `/var/lib/messages/`, in the system partition
-  ([RFC 0010](0010-file-layout.md)). A log's first record names its
-  transport and peer.
+  ([RFC 0010](0010-file-layout.md)). A log is kept in segments of up to
+  128 KB, each a file that begins with a record naming the
+  conversation's transport and peer, so that it stands alone; a new
+  segment begins when the last is full.
 - **Not SQLite,** which this RFC first proposed. It was measured on the
   T-Deck Max on 2026-10-30, with SQLite 3.45.1, a delivery as one
   transaction, the journal truncated and free pages given back:
@@ -211,16 +213,16 @@ Then:
   worker: under a second for a full store. It keeps, in PSRAM, about
   100 KB at the limit:
   - each conversation's counts, the start of its newest text, and its
-    file's size;
-  - each message's place in its file, and its status;
+    segments' sizes;
+  - each message's segment and place in it, and its status;
   - the keys of delivered messages, so that a message delivered twice is
     stored once;
   - the next ids: a message's and a conversation's are 64-bit counters.
 - **Reading.** The conversations come from memory. A page of messages is
   read at the places memory gives: about 15 ms.
 - **Deleting.** A deleted message gets its record, and its space comes
-  back when its conversation is rewritten (below). A deleted
-  conversation's file is removed.
+  back when its segment is rewritten (below). A deleted conversation's
+  files are removed.
 - **All file work runs on the program's workers, one job at a time:** a
   write takes a tenth of a second, over a handler's budget (RFC 0007),
   and a rewrite takes seconds. The loop keeps the memory, and gives each
@@ -236,13 +238,16 @@ Then:
     without their oldest read messages, by the order they were stored.
     An outgoing message counts as read once it is sent, failed, or not
     known to be sent.
-  - A conversation is rewritten into a new file, which is then renamed
-    over the old one: littlefs renames atomically, so a reset leaves one
-    or the other. Statuses are folded into their messages, and deleted
-    messages left out. Rewriting 200 KB takes about 3 s; it runs after
-    the delivery that passed the limit, never before Messages answers.
-  - A conversation whose file is mostly deleted messages is rewritten
-    the same way.
+  - Room is made a segment at a time, oldest first: the segment is
+    rewritten into a new file, which is then renamed over the old one.
+    littlefs renames atomically, so a reset leaves one or the other, and
+    a new file left by a reset is removed at start. Statuses are folded
+    into their messages, and deleted messages left out; a segment left
+    empty is removed. A rewrite needs at most a segment's room, 128 KB,
+    and takes about 2 s; it runs after the delivery that passed the
+    limit, never before Messages answers.
+  - A segment that is mostly deleted messages is rewritten the same
+    way.
   - Unread and queued messages are never deleted to make room. If
     nothing else is left, a delivery is refused, the topic says the
     store is full, and the transport keeps the message.
@@ -338,7 +343,7 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
   meanwhile. A full store takes about a second to read at start.
 - **Flash wear.** Each write rewrites its file's last block and
   littlefs's entry for it; a rewrite to make room rewrites its
-  conversation. A hundred messages a day, with their statuses, rewrite
+  segment. A hundred messages a day, with their statuses, rewrite
   each block of the partition about once a day: far from its limits.
 - **Privacy at rest.** Internal flash is not encrypted by default
   ([RFC 0014](0014-security.md)). A copy of the flash holds the texts.
