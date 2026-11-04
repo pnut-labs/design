@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-30
-- **Last changed:** 2026-10-30
+- **Last changed:** 2026-10-31
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -282,9 +282,9 @@ its supply sags under GSM's transmit bursts. So:
   network has sent its time since the modem started, Telephony reads the
   modem's clock (`AT+CCLK?`) on the first of its own events after the
   hour (a report from the modem, a question answered), so nothing wakes
-  the device for it. Not every
-  network sends the time; without it, the modem's clock is whatever it
-  started with, and there is no hourly reading.
+  the device for it. Not every network sends the time; without it, the
+  modem's clock is whatever it started with, and there is no hourly
+  reading.
   - That clock runs on the modem's own crystal since the network last
     set it, and gives whole seconds and an offset in quarter hours.
   - Such a reading is marked on the topic as the modem's clock, with an
@@ -293,6 +293,20 @@ its supply sags under GSM's transmit bursts. So:
   - Time must not learn the sleep clock's rate from such readings.
     RFC 0028 is amended to say so, and its topic gains each reading's
     kind.
+- **A modem found running is read once.** The processor's full reset, as
+  in flashing, loses the system clock, and Time starts from its saved
+  value; a modem left on stays attached, so the network does not send
+  its time again. Telephony reads the modem's clock once the modem is
+  on, and Time gets it as the modem's clock, with its offset and an
+  uncertainty of a minute: 100 ppm over a week, since when the network
+  set that clock is not known.
+  - The A7682E starts with its last time and the zone +00 until the
+    network sends the time (seen on 2026-10-30): a reading in +00 is
+    left aside, as one the network may not have set. In zones at UTC
+    itself, the clock then waits for the modem's next attach, or another
+    source.
+  - The network's own message, a power-up or a restart of the modem
+    cancels the reading.
 - **The uncertainty of a network message's reading** is the second it
   is truncated to, and the time the line takes to arrive: a second in
   all.
