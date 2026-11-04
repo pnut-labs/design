@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-30
-- **Last changed:** 2026-10-30
+- **Last changed:** 2026-11-04
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -88,7 +88,12 @@ A transport is a way messages travel. Its name is fixed:
 Then:
 
 - **Registering.**
-  - Telephony registers `sms` when it starts.
+  - Telephony registers `sms` on its connection to Messages, at every
+    connection, since either program may start again. That connection
+    carries the transport from then on, in place of any before it.
+    Messages refuses `sms` to any program but Telephony's, by Service
+    states' name for the caller. The method is `RegisterTransport`,
+    since `register` is a C keyword (pnut-os #51).
   - An app's transport comes from its manifest. Packages announces it
     at install (RFC 0009), and Messages asks Packages for the installed
     ones when it starts.
@@ -96,18 +101,29 @@ Then:
     read-only, and its queued messages fail with "transport removed".
 - **Delivering.**
   - A transport hands Messages a message it received: the peer, the
-    sender if any, the text, the time it was sent, and a key.
+    sender if any, the text, the time it was sent, and a key. It comes
+    on the connection the transport registered on; on any other it is
+    refused, as unregistered.
+  - The text may be empty, as a binary SMS's is; the key may not.
   - The key names the message on its network. For an SMS it is the
     sender, the network's time stamp (a long one's first part's), a long
     one's reference, and a hash of the text, since one sender can send
     two messages in the same second. Messages stores a message once for
     each key, so a delivery repeated after a reset is not stored twice.
+    A key it holds, even of a message deleted since (until a rewrite
+    drops it, or the conversation goes), and even in a full store, is
+    answered as delivered, with the stored message's ids and a mark that
+    it came again.
   - Messages has the message on flash before it answers. Only then does
     the transport let go of it: Telephony deletes the SMS from the
     modem after that answer, not before.
   - When Messages cannot keep a message, because there is no room or
     the flash is failing, it says so, and the transport keeps it: an
     SMS stays in the modem. The owner is told (below).
+  - A transport delivers one message at a time, since its deliveries
+    wait in the queue the system UI's requests do. An answer that does
+    not come in time is "not known": the same key delivered again is
+    safe.
 - **Sending.**
   - The system UI asks Messages to send a text to a peer over a
     transport, as does an app that may. Messages answers once the
@@ -142,7 +158,8 @@ Then:
 - **Reading.**
   - Conversations come in their order, a page at a time.
   - A conversation's messages come a page at a time.
-  - Marking a conversation read.
+  - Marking a conversation read, up to the newest message shown, so
+    that one that came since stays unread (pnut-os #51).
   - Deleting a message or a whole conversation.
 - **Who may.**
   - **The system UI** may do all of it.
@@ -170,7 +187,14 @@ Then:
   ([RFC 0010](0010-file-layout.md)). A log is kept in segments of up to
   128 KB, each a file that begins with a record naming the
   conversation's transport and peer, so that it stands alone; a new
-  segment begins when the last is full.
+  segment begins when the last is full. That record also holds the next
+  message id when it was written, and a rewrite keeps it so: at start,
+  ids go on from the highest any file holds, even when the newest
+  messages were compacted away. Otherwise a read record kept from them
+  would cover a new message given an old id, and it would come in read
+  (pnut-os #51). A segment removed whole, or a conversation removed,
+  takes its head with it, and its ids may be given again; no read record
+  left covers them.
 - **Not SQLite,** which this RFC first proposed. It was measured on the
   T-Deck Max on 2026-10-30, with SQLite 3.45.1, a delivery as one
   transaction, the journal truncated and free pages given back:
@@ -280,9 +304,11 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
 ### The order of the work
 
 1. **The data program and Messages:**
-   - the store, and a delivery's time measured on the phone;
-   - transports registering, delivering and taking their queue;
-   - reading, and the topic.
+   - the store, and a send's time measured on the phone (pnut-os #48);
+   - transports registering and delivering (#51), and taking their
+     queue, which waits for streams in the interfaces' definitions
+     ([RFC 0023](0023-service-library.md));
+   - reading, and the topic (#48).
 
    It is tested with a test transport, and with a `messages` command for
    the shell (`list`, `show`, `send`), like `settings` (pnut-os #40).
