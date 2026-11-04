@@ -163,9 +163,25 @@ Measured on battery, with the fuel gauge, which reports whole milliamps.
   transmit bursts), so calls need voice over LTE, which the operator must
   allow for the line (verified with T-Mobile Polska, 2026-09-28).
 - **The modem keeps some settings across power cycles** (network mode,
-  bands): the software must set them at every start.
+  bands): the software must set them at every start. Airplane mode is
+  not one of them: the modem starts off the air, and goes on the air by
+  itself once its SIM is ready, about 2.5 s later (2026-10-30), so the
+  software gives it again then.
+- **The modem's clock after a power-up** reads its last network time
+  with the zone +00, until the network sends the time again
+  (2026-10-30).
+- **The processor's full reset loses the system clock,** as in flashing;
+  a soft reset keeps it. A modem left on stays attached, and the network
+  sends its time only when the modem attaches, so the software reads the
+  modem's clock when it finds the modem running (2026-10-30).
 - **The modem's own sleep is unreliable** with the processor asleep: it
   misses commands (2026-09-26).
+- **A write in the middle of a file on internal flash costs the rest of
+  the file:** littlefs copies everything after the change when the file
+  is synced. A database commit (SQLite) took 3.7 s on an empty database
+  and about 12 s at 232 KB; appending to a file takes 0.07–0.24 s
+  whatever its size; reads run at about 1.2 MB/s, writes in a row at
+  63 KB/s (2026-10-30).
 - **The LoRa radio listens on one configuration at a time,** so only one
   mesh network (MeshCore or Meshtastic) can use it at once.
 - **The external LoRa antenna must be selected when fitted:** an unselected
