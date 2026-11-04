@@ -8,13 +8,14 @@
 
 ## Summary
 
-Messages is the device's one store of text messages: SMS, and the messages
-of mesh apps and other messaging apps. The transports carry them:
-Telephony carries SMS, and an app carries its own network's messages.
-Messages keeps the conversations, queues what is to be sent, and tells
-the system UI what changed. It runs in the data program. This RFC
-proposes SQLite on internal flash, whose writes take seconds there, and
-weighs that against the alternatives.
+Messages is the device's one store of text messages: SMS, and the
+messages of mesh apps and other messaging apps. The transports carry
+them: Telephony carries SMS, and an app carries its own network's
+messages. Messages keeps the conversations, queues what is to be sent,
+and tells the system UI what changed. It runs in the data program. It
+keeps the messages in files on internal flash, appended to: SQLite
+there, which this RFC first proposed, takes seconds per write, and
+longer as the store grows (measured below).
 
 ## Problem
 
@@ -115,9 +116,9 @@ Then:
     oldest first, as the transport gives credit
     ([RFC 0004](0004-layers.md), [RFC 0005](0005-communication.md)).
   - A message whose transport takes it at once is stored as sending, in
-    the send's one transaction. A message that had to wait is written
-    as sending before the transport gets it: a second transaction, only
-    for messages that waited. So no message is handed over twice, even
+    the send's one write. A message that had to wait is written as
+    sending before the transport gets it: a second write, only for
+    messages that waited. So no message is handed over twice, even
     across a reset.
   - The transport reports each message as sent, delivered or failed.
 - **A transport that is not running** leaves its messages queued:
@@ -164,39 +165,68 @@ Then:
 
 ### Where it keeps them
 
-- **One SQLite database,** `/var/lib/messages/messages.db`, in the system
-  partition on internal flash ([RFC 0010](0010-file-layout.md)). The data
-  program links SQLite ([RFC 0011](0011-storage.md)).
-- **Writes there take seconds.** The previous system measured SQLite on
-  this flash on 2026-09-25, each statement its own transaction:
+- **Files on internal flash, appended to:** a log for each conversation,
+  in `/var/lib/messages/`, in the system partition
+  ([RFC 0010](0010-file-layout.md)). A log is kept in segments of up to
+  128 KB, each a file that begins with a record naming the
+  conversation's transport and peer, so that it stands alone; a new
+  segment begins when the last is full.
+- **Not SQLite,** which this RFC first proposed. It was measured on the
+  T-Deck Max on 2026-10-30, with SQLite 3.45.1, a delivery as one
+  transaction, the journal truncated and free pages given back:
 
-  | Per statement | littlefs, internal flash | FAT, memory card |
-  |---|---|---|
-  | insert | 2.2 s | 355 ms |
-  | update, delete | 3.0–4.5 s | 300–420 ms |
-  | read one row | 43 ms | 31 ms |
-  | the latest 20 rows | 27 ms | 36 ms |
+  | The store | One delivery |
+  |---|---|
+  | nearly empty, 40 KB | 3.7 s |
+  | 405 messages, 136 KB | 8.3 s |
+  | 808 messages, 232 KB | 11.5–13.7 s |
+  | at the limit, 1 MB, extrapolated | about 35–50 s |
 
-  littlefs never writes in place: each change rewrites and erases whole
-  4 KB blocks, and SQLite's journal multiplies that.
-- **So the store writes little, and in batches:**
-  - A delivery is one transaction, and a send is one. They must be on
-    flash before Messages answers. So is a waiting message's hand-over
-    to its transport (above).
-  - Later statuses (sent, delivered, failed) and marks of read are kept
-    in memory. They are written together, at most every minute, or with
-    the next transaction.
-  - A reset loses at most a minute of them. A message left sending
-    then shows as "not known to be sent", and messages read just before
-    show unread again, their notifications posted again.
-  - The journal is emptied rather than deleted (`journal_mode =
-    TRUNCATE`), which costs fewer directory writes.
-  - Step 1 of the work measures a delivery again with these choices,
-    on this firmware.
-- **All of SQLite runs on the program's workers,** reads too: a read
-  takes tens of milliseconds, over a handler's budget (RFC 0007).
-- **The page cache, 64 KB, is in PSRAM,** where the heap of `full`, the
-  T-Deck's configuration, lives.
+  littlefs never writes in place: when a file changed in its middle is
+  synced, littlefs copies everything after the change into new blocks.
+  SQLite rewrites the database's first page at each commit, so each
+  commit rewrites about the whole file, and wears the flash as much.
+  Other journal settings took 2–5 s on the empty store, and grow the
+  same way.
+- **Appending is fast.** Adding a record to a file took 0.07–0.24 s with
+  its sync, whatever the file's size. Reading runs at about 1.2 MB/s,
+  and one record at a known place takes 6–8 ms (measured on 2026-10-30).
+- **Records.** Each is its length, the record (protobuf, from Messages'
+  `.proto`) and a checksum. There are four kinds:
+  - a message, with all it has (above);
+  - a status: sending, sent, delivered or failed, with a failure's
+    reason;
+  - read: the conversation is read up to a message;
+  - deleted: a message is.
+- **Every write is on flash before Messages answers,** in about a tenth
+  of a second:
+  - a delivery or a send appends its message, and a new conversation is
+    a new file;
+  - statuses and marks of read are written as they come, not gathered,
+    so a reset loses none. A message its transport had taken when the
+    device reset shows as "not known to be sent".
+- **littlefs commits an append whole when it syncs.** A record cut
+  short, as by a crash between a write and its sync, fails its checksum
+  when the logs are read at start, and its file is cut back to the last
+  whole record.
+- **In memory, built at start.** Messages reads every log at start, on a
+  worker: under a second for a full store. It keeps, in PSRAM, about
+  100 KB at the limit:
+  - each conversation's counts, the start of its newest text, and its
+    segments' sizes;
+  - each message's segment and place in it, and its status;
+  - the keys of delivered messages, so that a message delivered twice is
+    stored once;
+  - the next ids: a message's and a conversation's are 64-bit counters.
+- **Reading.** The conversations come from memory. A page of messages is
+  read at the places memory gives: about 15 ms.
+- **Deleting.** A deleted message gets its record, and its space comes
+  back when its segment is rewritten (below). A deleted conversation's
+  files are removed.
+- **All file work runs on the program's workers, one job at a time:** a
+  write takes a tenth of a second, over a handler's budget (RFC 0007),
+  and a rewrite takes seconds. The loop keeps the memory, and gives each
+  job copies of what it needs ([RFC 0023](0023-service-library.md)).
 - **A size limit,** by default **1 MB** of the system partition. The
   partition is 2 MB on the T-Deck Max. It holds the settings, Time's
   state and the log, which takes up to about 340 KB, and littlefs needs
@@ -204,17 +234,27 @@ Then:
   in Board's description ([RFC 0024](0024-board.md)); until the schema
   has it, it is a firmware option.
 - **Making room.**
-  - When a new message would pass the limit, Messages deletes the
-    oldest read messages first, by the order they were stored. An
-    outgoing message counts as read once it is sent, failed, or not
+  - When the store passes the limit, Messages rewrites conversations
+    without their oldest read messages, by the order they were stored.
+    An outgoing message counts as read once it is sent, failed, or not
     known to be sent.
-  - The limit counts the database's pages in use. Free pages are given
-    back (`auto_vacuum = INCREMENTAL`, set before the first table), with
-    the batched writes, never in a delivery: it is a write of seconds
-    too.
+  - Room is made a segment at a time, oldest first: the segment is
+    rewritten into a new file, which is then renamed over the old one.
+    littlefs renames atomically, so a reset leaves one or the other, and
+    a new file left by a reset is removed at start. Statuses are folded
+    into their messages, and deleted messages left out; a segment left
+    empty is removed. A rewrite needs at most a segment's room, 128 KB,
+    and takes about 2 s; it runs after the delivery that passed the
+    limit, never before Messages answers.
+  - A segment that is mostly deleted messages is rewritten the same
+    way.
   - Unread and queued messages are never deleted to make room. If
     nothing else is left, a delivery is refused, the topic says the
     store is full, and the transport keeps the message.
+- **The store has an interface of its own inside Messages,** so that
+  another engine can replace the files later, such as SQLite where it
+  writes fast, without a change to what transports and the system UI
+  see.
 
 ### The data program
 
@@ -236,7 +276,6 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
 | conversations in a page | 8 |
 | messages in a page | 2, since a message is up to 1.5 KB and an answer at most 4080 bytes ([RFC 0023](0023-service-library.md)) |
 | the store's limit | 1 MB on the T-Deck Max |
-| statuses kept in memory before written | a minute |
 
 ### The order of the work
 
@@ -252,33 +291,35 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
 
 ## Rules it follows
 
-- **One owner.** Messages alone opens `messages.db` (RFC 0004). Others
-  reach the messages through its interface.
+- **One owner.** Messages alone opens its files (RFC 0004). Others reach
+  the messages through its interface.
 - **Transports are optional.** A device without a modem has no `sms`;
   Messages works with whatever transports exist.
 - **Stored before answered,** so nothing is lost between a transport and
-  the store. Statuses after that are not, by choice (above).
+  the store; statuses and marks of read too.
 - **Topics carry nothing private.**
-- **Where it bends a rule:**
-  - SQLite allocates memory in every statement, where
-    [RFC 0023](0023-service-library.md) has a service allocate only at
-    start. Its allocations go to the PSRAM heap, and its page cache is
-    sized once.
-  - The database's connection is touched by the workers, where RFC 0004
-    keeps a module's state on its loop. Each statement runs on one
-    worker at a time, behind a lock, and only its result comes back to
-    the loop.
+- **Where it bends a rule:** the memory that indexes the store grows
+  with it, where [RFC 0023](0023-service-library.md) has a service
+  allocate only at start. It is allocated in blocks in PSRAM as the
+  store grows, up to what the limit needs, and given back as it shrinks.
 
 ## Alternatives
 
+- **SQLite on internal flash,** this RFC's first proposal: seconds per
+  delivery, and longer as the store grows (measured above).
+- **SQLite with each page in a small file of its own,** through a
+  storage layer of its own for SQLite. It keeps SQL, and its time would
+  not grow with the store: about 1–2.5 s per delivery, estimated from
+  4 KB writes measured at 0.09–0.38 s. Some hundreds of files in a
+  directory have not been measured.
+- **SQLite on another file system,** in the package store, unused so
+  far: NuttX's SmartFS, or FAT with wear levelling. Not measured; less
+  resistant than littlefs to a power cut; and a change to the flash's
+  layout (RFC 0010).
 - **The memory card,** as the previous system did: six to ten times
-  faster writes. RFC 0010 keeps services' state on internal flash, so that
-  messages work without a card. A card can be removed, and the store
-  would then be gone until it returns.
-- **Files instead of SQLite:** a file for each conversation, appended to.
-  Possibly faster on littlefs, but not measured. Paging, counting and
-  deleting old messages would be Messages' own code. The previous
-  system's first release did this and moved to SQLite.
+  faster writes. RFC 0010 keeps services' state on internal flash, so
+  that messages work without a card. A card can be removed, and the
+  store would then be gone until it returns.
 - **Another database.** FlashDB was measured in the previous system:
   faster writes on littlefs (about 0.4 s), but slow reads of many
   records, and its whole size reserved up front.
@@ -290,29 +331,33 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
 
 ## Costs and risks
 
-- **Flash for code.** SQLite added 377 KB to the previous system's
-  firmware. Today's firmware is 1.3 MB of a 4 MB slot (2026-10-29).
-- **RAM.** SQLite held 184 KB of the heap with one database open in the
-  previous system, in PSRAM.
-- **Speed.** Seconds per delivery, as above. A burst of SMS after a day
-  out of reach is stored one after another, and stays in the modem
-  meanwhile.
-- **Flash wear.** Each transaction rewrites several 4 KB blocks. littlefs
-  spreads them over the partition. A hundred messages a day is far from
-  its limits, but that is why statuses are batched.
+- **Code of its own** for what SQLite would give: paging, counting,
+  finding a message delivered twice, making room, and the records'
+  format, which has a version.
+- **Flash for code.** Small, with no SQLite in the firmware: it added
+  550 KB with its shell (measured on 2026-10-30). Today's firmware is
+  1.3 MB of a 4 MB slot.
+- **RAM.** The index, about 100 KB at the limit, in PSRAM.
+- **Speed.** About a tenth of a second per write. A rewrite to make room
+  takes seconds; deliveries wait for it, and stay with their transport
+  meanwhile. A full store takes about a second to read at start.
+- **Flash wear.** Each write rewrites its file's last block and
+  littlefs's entry for it; a rewrite to make room rewrites its
+  segment. A hundred messages a day, with their statuses, rewrite
+  each block of the partition about once a day: far from its limits.
 - **Privacy at rest.** Internal flash is not encrypted by default
   ([RFC 0014](0014-security.md)). A copy of the flash holds the texts.
 - **To be measured** when it is built:
-  - a delivery's time, with the journal and the batching above;
-  - SQLite's size in this firmware;
+  - a delivery's time through Messages;
+  - reading a full store at start;
   - the space one message takes in the store.
 
 ## Open questions
 
-- **Where the store lives:** internal flash, at seconds per write, as
-  proposed; the memory card when one is in, with internal flash as a
-  fallback, as the previous system did, which changes RFC 0010; or files
-  instead of SQLite.
+- **Another engine, later.** Files are the store for now. Whether SQLite
+  or another engine replaces them, on devices or file systems where it
+  writes fast, is left open; the store has an interface of its own
+  inside Messages for that.
 - **The store's limit:** 1 MB of the T-Deck's 2 MB system partition, as
   proposed; or a bigger system partition while the package store is
   still empty, since resizing it later means moving data: in practice a
