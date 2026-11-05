@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-30
-- **Last changed:** 2026-11-04
+- **Last changed:** 2026-11-05
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -137,6 +137,9 @@ Then:
     messages that waited. So no message is handed over twice, even
     across a reset.
   - The transport reports each message as sent, delivered or failed.
+  - When a transport's stream closes (its program restarted, or its
+    connection went), what it had taken becomes "not known to be sent" at
+    once; a report that comes after still says what became of it.
 - **A transport that is not running** leaves its messages queued:
   Telephony's until it runs and has the network, an app's until the app
   runs. How an app is started for that is an open question: RFC 0008
@@ -193,8 +196,10 @@ Then:
   messages were compacted away. Otherwise a read record kept from them
   would cover a new message given an old id, and it would come in read
   (pnut-os #51). A segment removed whole, or a conversation removed,
-  takes its head with it, and its ids may be given again; no read record
-  left covers them.
+  takes its head with it, so the next ids are first written to a small
+  file, `ids`, which start reads as a floor: ids are never given again,
+  and a transport's late report, which names a message by its id, never
+  lands on another.
 - **Not SQLite,** which this RFC first proposed. It was measured on the
   T-Deck Max on 2026-10-30, with SQLite 3.45.1, a delivery as one
   transaction, the journal truncated and free pages given back:
@@ -232,7 +237,10 @@ Then:
 - **littlefs commits an append whole when it syncs.** A record cut
   short, as by a crash between a write and its sync, fails its checksum
   when the logs are read at start, and its file is cut back to the last
-  whole record.
+  whole record. A file that cannot be read at all fails the start, which
+  is tried again; after three failures in a row, the file is renamed
+  aside (`<name>.bad`), kept as it is, and the rest of the store works
+  without it.
 - **In memory, built at start.** Messages reads every log at start, on a
   worker: under a second for a full store. It keeps, in PSRAM, about
   100 KB at the limit:
