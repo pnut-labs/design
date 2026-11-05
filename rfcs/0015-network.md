@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-05
-- **Last changed:** 2026-10-05
+- **Last changed:** 2026-11-05
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -32,8 +32,8 @@ TLS, and MQTT and WebSocket clients.
 
 ### The Network service
 
-**Network** is a service in the radios program, beside Wi-Fi and
-Bluetooth (RFC 0007). It owns:
+**Network** is a service in the network program, beside Wi-Fi
+([RFC 0031](0031-wifi.md); RFC 0007). It owns:
 
 - **connectivity:** which links are up (Wi-Fi, mobile data, others later)
   and which one carries traffic, and whether a link costs money;
@@ -46,7 +46,7 @@ with the app ([RFC 0005](0005-communication.md)). Every call is
 asynchronous; data arriving on a connection comes to the app as events,
 with credit ([RFC 0004](0004-layers.md)).
 
-RFC 0007's list of services gains Network, in the radios program.
+RFC 0007's list of services gains Network, in the network program.
 
 ### What apps get
 
