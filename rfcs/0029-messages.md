@@ -92,9 +92,9 @@ Then:
     connection, since either program may start again. That connection
     carries the transport from then on, in place of any before it.
     Messages refuses `sms` to any program but Telephony's: it asks the
-    Service states module ([RFC 0006](0006-manager.md)) which program
-    calls. The method is `RegisterTransport`, since `register` is a C
-    keyword (pnut-labs/pnut-os#51).
+    Service states module (RFC 0006) which program calls. The method is
+    `RegisterTransport`, since `register` is a C keyword
+    (pnut-labs/pnut-os#51).
   - An app's transport comes from its manifest. Packages announces it
     at install (RFC 0009), and Messages asks Packages for the installed
     ones when it starts.
@@ -198,9 +198,9 @@ Then:
   would cover a new message given an old id, and it would come in read
   (pnut-labs/pnut-os#51). A segment removed whole, or a conversation
   removed, takes its head with it, so the next ids are first written to
-  a small file, `ids`, which start reads as a floor: ids are never given
-  again, and a transport's late report, which names a message by its id,
-  never lands on another.
+  a small file, `ids`, read at start as the lowest ids to give: ids are
+  never given again, and a transport's late report, which names a message
+  by its id, never lands on another.
 - **Not SQLite,** which this RFC first proposed. It was measured on the
   T-Deck Max on 2026-10-30, with SQLite 3.45.1, a delivery as one
   transaction, the journal truncated and free pages given back:
@@ -238,10 +238,11 @@ Then:
 - **littlefs commits an append whole when it syncs.** A record cut
   short, as by a crash between a write and its sync, fails its checksum
   when the logs are read at start, and its file is cut back to the last
-  whole record. A file that cannot be read at all fails the start, which
-  is tried again; after three failures in a row, the file is renamed
-  aside (`<name>.bad`), kept as it is, and the rest of the store works
-  without it.
+  whole record. A file that cannot be read at all fails the read: the
+  store is read again after 30 s, then after longer, and requests that
+  need it fail meanwhile. After three failed reads in a row, the next
+  renames the file aside (`<name>.bad`), kept as it is, and the rest of
+  the store works without it.
 - **In memory, built at start.** Messages reads every log at start, on a
   worker: under a second for a full store. It keeps, in PSRAM, about
   100 KB at the limit:
@@ -307,7 +308,7 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
 | a failure's reason | 64 bytes |
 | the start of the newest text, in a conversation | 48 bytes |
 | conversations in a page | 8 |
-| messages in a page | 2, since a message is up to 1.5 KB and an answer at most 4080 bytes ([RFC 0023](0023-service-library.md)) |
+| messages in a page | 2, since a message is up to 1.5 KB and an answer at most 4080 bytes (RFC 0023) |
 | the store's limit | 1 MB on the T-Deck Max |
 
 ### The order of the work
@@ -317,7 +318,7 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
      (pnut-labs/pnut-os#48);
    - transports registering and delivering (pnut-labs/pnut-os#51), and
      taking their queue, which waits for streams in the interfaces'
-     definitions ([RFC 0023](0023-service-library.md));
+     definitions (RFC 0023);
    - reading, and the topic (pnut-labs/pnut-os#48).
 
    It is tested with a test transport, and with a `messages` command for
@@ -336,9 +337,9 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
   the store; statuses and marks of read too.
 - **Topics carry nothing private.**
 - **Where it bends a rule:** the memory that indexes the store grows
-  with it, where [RFC 0023](0023-service-library.md) has a service
-  allocate only at start. It is allocated in blocks in PSRAM as the
-  store grows, up to what the limit needs, and given back as it shrinks.
+  with it, where RFC 0023 has a service allocate only at start. It is
+  allocated in blocks in PSRAM as the store grows, up to what the limit
+  needs, and given back as it shrinks.
 
 ## Alternatives
 
