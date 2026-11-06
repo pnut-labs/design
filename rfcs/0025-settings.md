@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-11-05
+- **Last changed:** 2026-11-06
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -76,7 +76,7 @@ reads plain fields; a change goes to Settings and comes back through the
 topic. Secrets are not in the struct: Settings neither lists nor sets
 their values until it can encrypt them (below, from
 [RFC 0031](0031-wifi.md)'s first step), and an owner then reads its own
-through a request to Settings.
+secrets' values through a request to Settings.
 
 When a new version of a service or app changes its schema, added
 settings take their defaults, removed ones lose their values, and a

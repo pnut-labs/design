@@ -68,4 +68,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0028](0028-time.md) | Time | Accepted |
 | [0029](0029-messages.md) | Messages | Accepted |
 | [0030](0030-telephony.md) | Telephony | Accepted |
-| [0031](0031-wifi.md) | Wi-Fi | Draft |
+| [0031](0031-wifi.md) | Wi-Fi | Accepted |
