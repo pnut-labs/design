@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-08
-- **Last changed:** 2026-10-29
+- **Last changed:** 2026-11-06
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -73,8 +73,10 @@ The generator writes the schema the service registers, and typed access:
 the message's own struct holds the values, which the service library
 reads again when the settings topic announces a change. The service
 reads plain fields; a change goes to Settings and comes back through the
-topic. Secrets are not in the struct yet: Settings neither lists nor
-sets their values until it can encrypt them (below).
+topic. Secrets are not in the struct: Settings neither lists nor sets
+their values until it can encrypt them (below, from
+[RFC 0031](0031-wifi.md)'s first step), and an owner then reads its own
+secrets' values through a request to Settings.
 
 When a new version of a service or app changes its schema, added
 settings take their defaults, removed ones lose their values, and a
@@ -121,7 +123,9 @@ changes to its own settings (RFC 0008).
 
 A secret (a Wi-Fi passphrase, a token) is **encrypted at rest** under a
 key Security derives from the device key alone
-([RFC 0014](0014-security.md)), not from the unlock key: a passphrase is
+([RFC 0014](0014-security.md)), not from the unlock key; until Security
+derives it, under a weak key of Settings' own
+([RFC 0031](0031-wifi.md)). A passphrase is
 needed before the first unlock, so that Wi-Fi connects after a restart. A
 copy of the flash away from the device cannot read it; native code on the
 device can, as RFC 0014 accepts for the flat build. A secret is never

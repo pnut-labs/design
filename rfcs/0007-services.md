@@ -3,12 +3,12 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-10-30
+- **Last changed:** 2026-11-05
 - **Supersedes / superseded by:** —
 
 ## Summary
 
-The services of pnut-os, what each owns, and the nine programs they are
+The services of pnut-os, what each owns, and the ten programs they are
 grouped into. The list covers the parts a device pnut-os runs on may
 have, not only those of a device that exists today; a service whose
 hardware a device lacks is simply not started. What is specific to one
@@ -177,7 +177,8 @@ an app starts, not on every call.
 |---|---|
 | **system** | Service states, Settings, Power, Time, Notifications, Log, Board |
 | **telephony** | Telephony |
-| **radios** | Radio, Wi-Fi, Bluetooth, NFC, Network |
+| **radios** | Radio, Bluetooth, NFC |
+| **network** | Wi-Fi, Network ([RFC 0031](0031-wifi.md)) |
 | **sensors** | Location, Motion, Sensors, Health |
 | **data** | Messages, Contacts, Packages, Storage |
 | **media** | Audio, Camera, Haptics |
@@ -263,7 +264,7 @@ Starting values, to be confirmed by measurement on each device:
 
 - **Board could become a junk drawer:** only its rule keeps parts that
   belong to a generic service out of it.
-- **Nine programs** cost nine tasks, their stacks and their workers;
+- **Ten programs** cost ten tasks, their stacks and their workers;
   where those stacks can live (internal RAM or PSRAM) is still to be
   measured.
 - **Modules in one program share its fate:** a fault in one stops the
