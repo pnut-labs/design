@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-30
-- **Last changed:** 2026-11-05
+- **Last changed:** 2026-11-06
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -91,9 +91,10 @@ Then:
   - Telephony registers `sms` on its connection to Messages, at every
     connection, since either program may start again. That connection
     carries the transport from then on, in place of any before it.
-    Messages refuses `sms` to any program but Telephony's, by Service
-    states' name for the caller. The method is `RegisterTransport`,
-    since `register` is a C keyword (pnut-os #51).
+    Messages refuses `sms` to any program but Telephony's: it asks the
+    Service states module ([RFC 0006](0006-manager.md)) which program
+    calls. The method is `RegisterTransport`, since `register` is a C
+    keyword (pnut-labs/pnut-os#51).
   - An app's transport comes from its manifest. Packages announces it
     at install (RFC 0009), and Messages asks Packages for the installed
     ones when it starts.
@@ -162,7 +163,7 @@ Then:
   - Conversations come in their order, a page at a time.
   - A conversation's messages come a page at a time.
   - Marking a conversation read, up to the newest message shown, so
-    that one that came since stays unread (pnut-os #51).
+    that one that came since stays unread (pnut-labs/pnut-os#51).
   - Deleting a message or a whole conversation.
 - **Who may.**
   - **The system UI** may do all of it.
@@ -195,11 +196,11 @@ Then:
   ids go on from the highest any file holds, even when the newest
   messages were compacted away. Otherwise a read record kept from them
   would cover a new message given an old id, and it would come in read
-  (pnut-os #51). A segment removed whole, or a conversation removed,
-  takes its head with it, so the next ids are first written to a small
-  file, `ids`, which start reads as a floor: ids are never given again,
-  and a transport's late report, which names a message by its id, never
-  lands on another.
+  (pnut-labs/pnut-os#51). A segment removed whole, or a conversation
+  removed, takes its head with it, so the next ids are first written to
+  a small file, `ids`, which start reads as a floor: ids are never given
+  again, and a transport's late report, which names a message by its id,
+  never lands on another.
 - **Not SQLite,** which this RFC first proposed. It was measured on the
   T-Deck Max on 2026-10-30, with SQLite 3.45.1, a delivery as one
   transaction, the journal truncated and free pages given back:
@@ -312,14 +313,16 @@ keeps its log level in Settings ([RFC 0026](0026-log.md)).
 ### The order of the work
 
 1. **The data program and Messages:**
-   - the store, and a send's time measured on the phone (pnut-os #48);
-   - transports registering and delivering (#51), and taking their
-     queue, which waits for streams in the interfaces' definitions
-     ([RFC 0023](0023-service-library.md));
-   - reading, and the topic (#48).
+   - the store, and a send's time measured on the phone
+     (pnut-labs/pnut-os#48);
+   - transports registering and delivering (pnut-labs/pnut-os#51), and
+     taking their queue, which waits for streams in the interfaces'
+     definitions ([RFC 0023](0023-service-library.md));
+   - reading, and the topic (pnut-labs/pnut-os#48).
 
    It is tested with a test transport, and with a `messages` command for
-   the shell (`list`, `show`, `send`), like `settings` (pnut-os #40).
+   the shell (`list`, `show`, `send`), like `settings`
+   (pnut-labs/pnut-os#40).
 2. **Telephony's SMS transport,** in Telephony's RFC, 0030.
 3. **The system UI's screens,** and Notifications, when they come.
 
