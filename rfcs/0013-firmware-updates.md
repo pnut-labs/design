@@ -93,7 +93,7 @@ writes to flash on the data program's workers (RFC 0009).
 - **A developer's own builds** are signed with a key the build makes on
   their computer the first time, kept outside the source tree. The owner
   adds its public key to the device once, in Developer options; until the
-  system UI has that screen, from the developer's shell (RFC 0012).
+  system UI has that screen, from the developer's shell ([RFC 0012](0012-developer-access.md)).
 - **MCUboot checks that the image is whole,** by its hash. Its keys are
   built into it, with no way to add the owner's later, so the signature
   check is Packages'.
@@ -106,7 +106,7 @@ writes to flash on the data program's workers (RFC 0009).
 - **The project's update server:** a signed index of firmware versions,
   with their sizes and hashes, in a stable and a testing channel, like the
   repositories of RFC 0009.
-- **USB, with developer access** ([RFC 0012](0012-developer-access.md)):
+- **USB, with developer access** (RFC 0012):
   the image is handed to Packages, which installs it as above and says it
   is ready; the device restarts into it when the developer asks, with the
   install or afterwards.
