@@ -69,3 +69,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0029](0029-messages.md) | Messages | Accepted |
 | [0030](0030-telephony.md) | Telephony | Accepted |
 | [0031](0031-wifi.md) | Wi-Fi | Accepted |
+| [0033](0033-haptics.md) | Haptics | Accepted |
