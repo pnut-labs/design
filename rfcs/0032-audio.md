@@ -17,7 +17,7 @@ and keeps three volumes. It runs in the **media** program
 
 ## Problem
 
-[RFC 0007](0007-services.md) lists Audio among the services, but no RFC
+RFC 0007 lists Audio among the services, but no RFC
 says what it does, and others wait for it:
 
 - Notifications asks Audio for an alert's sound
@@ -48,7 +48,7 @@ What the first device has, and what the port to it has shown:
 
 | Call | Does |
 |---|---|
-| **Play** | a sound: a built-in one by name, or a file handed over as an open file ([RFC 0011](0011-storage.md)), with its use (below), once or looping; returns a handle |
+| **Play** | a sound: a built-in one by name, or a file handed over as an open file (RFC 0011), with its use (below), once or looping; returns a handle |
 | **Stop** | a sound, by its handle |
 | **Output** | a stream of samples the caller writes: its rate, channels and use; returns a ring in shared memory ([RFC 0005](0005-communication.md)) |
 | **Input** | a stream from the microphone, at a rate and channels the caller asks; returns a ring |
@@ -94,7 +94,7 @@ what it is asked to.
 
 ### Formats
 
-| Format | Decoder | Licence | Why |
+| Format | Decoder | License | Why |
 |---|---|---|---|
 | WAV (PCM, 8, 16 or 24 bits) | Audio's own | — | built-in sounds, recordings |
 | Opus, in Ogg | libopus, opusfile, libogg | BSD | small files of good quality: ringtones, voice |
@@ -130,7 +130,7 @@ what it is asked to.
 
 - **Playing** needs no permission while the app is on screen; in the
   background, the app needs the permission to stay running
-  ([RFC 0008](0008-runtime.md)).
+  (RFC 0008).
 - **Recording** needs the microphone permission, asked when first needed
   (RFC 0008). While anything records, the status bar shows it, from the
   `audio` topic.
