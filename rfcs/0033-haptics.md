@@ -15,7 +15,7 @@ short patterns of its callers' own, capped in length. It runs in the
 
 ## Problem
 
-[RFC 0007](0007-services.md) lists Haptics among the services, and
+RFC 0007 lists Haptics among the services, and
 Notifications asks it for an alert's vibration
 ([RFC 0020](0020-notifications.md)); an incoming call vibrates while it
 rings ([RFC 0030](0030-telephony.md)); apps vibrate too
@@ -46,7 +46,7 @@ A topic, **`haptics`**, says what plays, for the system UI and tests.
 | **tick** | a key or a step in a list |
 | **click** | a press that did something |
 | **double click** | a choice confirmed |
-| **notification** | an alert ([RFC 0020](0020-notifications.md)) |
+| **notification** | an alert (RFC 0020) |
 | **ring** | an incoming call: repeats until stopped |
 | **alarm** | an alarm: repeats until stopped |
 | **success**, **error** | an action's outcome |
@@ -81,7 +81,7 @@ modes (RFC 0020), as for sound.
 ### Who may vibrate
 
 - **Apps** need no permission while on screen; in the background, the
-  permission to stay running ([RFC 0008](0008-runtime.md)). A pattern is
+  permission to stay running (RFC 0008). A pattern is
   capped at 5 s, and an app may start at most one a second.
 - **Services** (Notifications, Telephony's ring through the system UI,
   Time's alarms) call it like any caller, with their uses.
