@@ -27,8 +27,7 @@ The first device has a u-blox MIA-M10Q (GPS, GLONASS, Galileo, BeiDou)
 on a UART, on a rail that is switched off when unused. Its NuttX driver
 parses the receiver's NMEA sentences into topics and passes the raw data
 through a device file. Switched off, the receiver forgets the satellites'
-orbits, so each start is a cold start, which takes tens of seconds
-under open sky.
+orbits, so each start is a cold start, the slowest kind.
 
 ## Proposal
 
@@ -142,7 +141,7 @@ reads the receiver's few hundred bytes a second.
 
 - **No fix measured yet on the first device:** only tried indoors during
   bring-up. The first outdoor cold start, and a hot start from saved
-  data, are to be measured before the numbers above are trusted.
+  data, are to be measured before the figure above is trusted.
 - **Saved orbit data ages:** after a few days it no longer helps, and the
   start is cold again.
 - **A module per chip family** is code to write and test for each; NMEA
