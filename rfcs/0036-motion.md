@@ -39,7 +39,7 @@ Its NuttX driver offers only the accelerometer and the gyroscope today.
 | **Steps** | today's count, since local midnight, and when it last changed |
 | **Follow steps** | a stream of the count as it changes, until the caller ends it |
 | **Activity** | what the owner is doing: still, walking, running, on a bicycle, in a vehicle, or unknown; and a stream of its changes |
-| **Abilities** | what Motion can tell on this device: which of the topics' fields, steps, activity and gestures its hub works out |
+| **Abilities** | what Motion can tell on this device: which `motion` fields it fills, and whether it counts steps, tells the activity and sees gestures |
 
 | Topic | Says | For |
 |---|---|---|
