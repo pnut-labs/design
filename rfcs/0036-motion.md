@@ -25,10 +25,10 @@ says what Motion offers or who may know it.
 
 The first device has a Bosch BHI260AP: an accelerometer, a gyroscope and
 a small processor of its own, which runs Bosch's firmware image
-(BSD-3-Clause), uploaded at the first use. Besides the raw readings, the
-image works out "virtual sensors": steps, significant motion, still or
-moving, orientation, gestures, depending on the image. Its NuttX driver
-offers only the accelerometer and the gyroscope today.
+(BSD-3-Clause), uploaded each time the hub is powered. Besides the raw
+readings, the image works out "virtual sensors": steps, significant
+motion, still or moving, orientation, gestures, depending on the image.
+Its NuttX driver offers only the accelerometer and the gyroscope today.
 
 ## Proposal
 
