@@ -78,10 +78,10 @@ not read them.
 - **The receiver's own prediction** of the satellites' orbits
   (AssistNow Autonomous on u-blox), worked out from what it has heard,
   good for a few days.
-- **Its orbit data saved** to `/var/lib` before the receiver is switched
-  off, and given back when it is switched on, with the time (from Time)
-  and the last position: a start within a few hours of the last becomes
-  a hot start, a few seconds.
+- **Its orbit data saved** to `/var/lib/location` before the receiver is
+  switched off, and given back when it is switched on, with the time
+  (from Time) and the last position: a start within a few hours of the
+  last becomes a hot start, a few seconds.
 - **Nothing is fetched or sent:** no assistance server, no account.
 
 ### Power
@@ -146,5 +146,5 @@ reads the receiver's few hundred bytes a second.
   start is cold again.
 - **A module per chip family** is code to write and test for each; NMEA
   covers the rest, poorly.
-- **Writes to `/var/lib`** at each switch-off: a few kilobytes, once per
-  use.
+- **Writes to `/var/lib/location`** at each switch-off: a few kilobytes,
+  once per use.
