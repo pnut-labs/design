@@ -239,8 +239,8 @@ Starting values, to be confirmed by measurement on each device:
   fewer, but a fault in a sensor's setup would stop the radios or a call's
   sound.
 - **A service for each kind of radio** (LoRa, Thread, UWB). Each new radio
-  would need a new service, though all of them are set up and used the
-  same way.
+  would need a new service, though all of them are set up and used in
+  the same way.
 - **No service for simple sensors,** only the kernel's topics. Nothing
   extra to build, but calibration, the catalogue and sensors outside the
   framework would have no home.

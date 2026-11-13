@@ -36,10 +36,10 @@ each on its own, cannot both listen at once.
 
 | Call | Does |
 |---|---|
-| **Open** | takes a radio, named as Board names it ([RFC 0024](0024-board.md)), with a configuration (below) and a way of listening; answered with a stream of the packets heard, until the caller closes it or goes |
+| **Open** | takes a radio, named as Board names it ([RFC 0024](0024-board.md)), with a configuration (below) and a way of listening; answered with a stream of the packets heard, until the caller closes the radio, or goes: its connection ends, or the runtime stops the app ([RFC 0008](0008-runtime.md)) |
 | **Send** | a packet, on the open radio's configuration; answered once it is on the air, or refused (below) |
 | **Configure** | changes the open radio's configuration, between packets |
-| **Close** | gives the radio back |
+| **Close** | gives the radio back, ending the stream |
 
 A topic, **`radio`**, says for each radio whether it is open, by whom,
 how it listens, and the air time used in the last hour, for the status
