@@ -39,6 +39,7 @@ Its NuttX driver offers only the accelerometer and the gyroscope today.
 | **Steps** | today's count, since local midnight, and when it last changed |
 | **Follow steps** | a stream of the count as it changes, until the caller ends it |
 | **Activity** | what the owner is doing: still, walking, running, on a bicycle, in a vehicle, or unknown; and a stream of its changes |
+| **Abilities** | what Motion can tell on this device: which of the topics' fields, steps, activity and gestures its hub works out |
 
 | Topic | Says | For |
 |---|---|---|
@@ -46,8 +47,8 @@ Its NuttX driver offers only the accelerometer and the gyroscope today.
 | **`gestures`** | picked up; lifted to look at | the system UI alone |
 
 What a device's hub cannot work out, Motion says it lacks, rather than
-guessing: a caller asks what Motion has, and a topic field it cannot fill
-says "unknown".
+guessing: a caller asks Abilities, and a topic field it cannot fill says
+"unknown".
 
 ### In the sensor hub
 
@@ -96,6 +97,7 @@ gestures drive them.
 | Still or moving, facing (`motion`) | nothing, for the app on screen; the permission to stay in the background, for one that is not |
 | Steps, activity | the **physical activity** permission ([RFC 0008](0008-runtime.md)), asked when first needed |
 | Gestures (`gestures`) | the system UI alone; apps never see them |
+| Abilities | nothing: it describes the device, not its owner |
 
 ### Where it runs
 
