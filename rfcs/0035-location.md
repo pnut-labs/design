@@ -141,7 +141,7 @@ reads the receiver's few hundred bytes a second.
 
 - **No fix measured yet on the first device:** only tried indoors during
   bring-up. The first outdoor cold start, and a hot start from saved
-  data, are to be measured before the figure above is trusted.
+  data, are to be measured before the hot start's few seconds are trusted.
 - **Saved orbit data ages:** after a few days it no longer helps, and the
   start is cold again.
 - **A module per chip family** is code to write and test for each; NMEA
