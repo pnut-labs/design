@@ -71,3 +71,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0031](0031-wifi.md) | Wi-Fi | Accepted |
 | [0032](0032-audio.md) | Audio | Accepted |
 | [0033](0033-haptics.md) | Haptics | Accepted |
+| [0036](0036-motion.md) | Motion | Accepted |

@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-11-05
+- **Last changed:** 2026-11-13
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -37,8 +37,8 @@ under [`hardware/`](../hardware/).
 | **Bluetooth** | the Bluetooth radio, including links to audio devices such as headphones; their sound goes through Audio | yes |
 | **NFC** | the NFC radio | yes |
 | **Location** | the satellite positioning (GNSS) receiver; it may also position from Wi-Fi networks and cell towers, through those services' interfaces | yes |
-| **Motion** | the motion sensors: orientation, movement and stillness, steps, wake gestures. It sets up a sensor hub where a device has one, and keeps the step history across restarts | yes |
-| **Sensors** | the other sensors: ambient light, proximity, compass, barometer, temperature, humidity, air quality, UV, hinge or slide position (below) | yes |
+| **Motion** | the motion sensors: orientation, movement and stillness, steps, activity, wake gestures. It sets up a sensor hub where a device has one, and keeps the day's step count across restarts; the step history is Health's ([RFC 0036](0036-motion.md)) | yes |
+| **Sensors** | the other sensors: ambient light, proximity, compass, barometer, temperature, humidity, air quality, UV, hinge or slide position (below), and the motion sensors' raw readings, once Motion has set them up ([RFC 0036](0036-motion.md)) | yes |
 | **Health** | heart rate and other health sensors, and the history they build up; their data needs permission everywhere | yes |
 | **Audio** | the audio codec and amplifier, speakers and earpiece, microphones, a headphone socket, and which source drives the output, including an FM tuner where a device has one. Its streams use shared memory ([RFC 0005](0005-communication.md)) | yes |
 | **Camera** | cameras; frames go through shared memory (RFC 0005) | yes |
