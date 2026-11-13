@@ -50,8 +50,9 @@ bar and the settings.
   and transmit power. Each kind has its configuration message; an
   802.15.4 or UWB radio fits the same calls with its own.
 - **A packet heard** comes with its signal strength, its signal-to-noise
-  ratio and when it ended. The stream uses credit (RFC 0004): a caller
-  that stops reading loses the oldest packets, never stalls the radio.
+  ratio and when it ended. The stream uses credit
+  ([RFC 0004](0004-layers.md)): a caller that stops reading loses the
+  oldest packets, never stalls the radio.
 
 ### One network at a time
 

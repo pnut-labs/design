@@ -32,7 +32,7 @@ under [`hardware/`](../hardware/).
 | Service | Owns | Optional |
 |---|---|---|
 | **Telephony** | the cellular modem and its control lines: calls, SMS, network state, mobile data, one or more SIMs or eSIMs, and satellite messaging where the modem offers it. Data runs through NuttX's `pppd` on a channel of the modem's link, which Telephony lends it | yes |
-| **Radio** | low-power packet radios: LoRa and other sub-GHz radios, 802.15.4 radios (Thread, Zigbee), ultra-wideband (UWB). It gives one caller at a time, such as a mesh app, a radio set up as it asks: the packets heard, and its own sent within the region's rules; it never lends the device ([RFC 0034](0034-radio.md)) | yes |
+| **Radio** | low-power packet radios: LoRa and other sub-GHz radios, 802.15.4 radios (Thread, Zigbee), ultra-wideband (UWB). It gives one caller at a time, such as a mesh app, a radio set up as it asks: the packets heard, and its own packets sent within the region's rules; it never lends the device ([RFC 0034](0034-radio.md)) | yes |
 | **Wi-Fi** | the Wi-Fi radio: scanning, known networks, connecting | yes |
 | **Bluetooth** | the Bluetooth radio, including links to audio devices such as headphones; their sound goes through Audio | yes |
 | **NFC** | the NFC radio | yes |
