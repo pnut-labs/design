@@ -72,3 +72,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0032](0032-audio.md) | Audio | Accepted |
 | [0033](0033-haptics.md) | Haptics | Accepted |
 | [0034](0034-radio.md) | Radio | Accepted |
+| [0035](0035-location.md) | Location | Accepted |
