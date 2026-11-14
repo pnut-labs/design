@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-10-03
-- **Last changed:** 2026-11-05
+- **Last changed:** 2026-11-13
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -32,7 +32,7 @@ under [`hardware/`](../hardware/).
 | Service | Owns | Optional |
 |---|---|---|
 | **Telephony** | the cellular modem and its control lines: calls, SMS, network state, mobile data, one or more SIMs or eSIMs, and satellite messaging where the modem offers it. Data runs through NuttX's `pppd` on a channel of the modem's link, which Telephony lends it | yes |
-| **Radio** | low-power packet radios: LoRa and other sub-GHz radios, 802.15.4 radios (Thread, Zigbee), ultra-wideband (UWB). It sets a radio up and lends it to whatever runs the protocol, such as a mesh app (RFC 0004) | yes |
+| **Radio** | low-power packet radios: LoRa and other sub-GHz radios, 802.15.4 radios (Thread, Zigbee), ultra-wideband (UWB). It gives one caller at a time, such as a mesh app, a radio set up as it asks: the packets heard, and its own packets sent within the region's rules; it never lends the device ([RFC 0034](0034-radio.md)) | yes |
 | **Wi-Fi** | the Wi-Fi radio: scanning, known networks, connecting | yes |
 | **Bluetooth** | the Bluetooth radio, including links to audio devices such as headphones; their sound goes through Audio | yes |
 | **NFC** | the NFC radio | yes |
@@ -239,8 +239,8 @@ Starting values, to be confirmed by measurement on each device:
   fewer, but a fault in a sensor's setup would stop the radios or a call's
   sound.
 - **A service for each kind of radio** (LoRa, Thread, UWB). Each new radio
-  would need a new service, though all of them are set up and lent the
-  same way.
+  would need a new service, though all of them are set up and used in
+  the same way.
 - **No service for simple sensors,** only the kernel's topics. Nothing
   extra to build, but calibration, the catalogue and sensors outside the
   framework would have no home.
