@@ -69,7 +69,6 @@ Failures).
 | **Close** | leave: the app is done, or back was pressed on its first screen |
 | **Resume** | the app's resume token (below), at most 512 bytes |
 | **Intent** | another app, explicitly or by kind (RFC 0008) |
-| **Surface** | the content of a widget, glance or status icon the app declared (RFC 0019), in any state |
 
 | To the app | When |
 |---|---|
@@ -291,11 +290,26 @@ rows, and opening and closing Options are the system UI's, never sent.
   device's other wake-ups; it does its work (Weather fetches a forecast
   and updates its widget), and says it is done or is stopped at the
   deadline.
-- **Widgets, glances and status icons** (RFC 0019): the system UI keeps
-  the last content an app gave for each it declared, and shows it while
-  the app is not running; it saves them to `/var/lib/ui` at most every
-  5 minutes, so Home survives a restart. An app gives their content with
-  Surface.
+- **Widgets, glances and status icons** (RFC 0019) take their content
+  from a common store, `/var/lib/surfaces/<app id>/<name>`: one record
+  for each surface the app declared, in the same blocks as a screen, an
+  encoded message without its header that fits one message (4 KB, RFC
+  0023), written beside the old one and renamed over it, as
+  [RFC 0011](0011-storage.md)'s whole files are. The app writes it, in
+  any state, or a service does on its behalf (Messages, the count of
+  unread conversations); then the writer publishes an update event on
+  the `surfaces` topic ([RFC 0005](0005-communication.md)), naming the
+  app and the record. The event is only a nudge: the topic has many
+  writers, so a missed event cannot be told, and on every event, and at
+  its own start, the system UI reads again each record it shows (a few,
+  small). It redraws them by the e-paper rules (below). The store is the
+  content: an app need not run for its widget to show, and Home is whole
+  after a restart. A declared surface with no record yet shows the app's
+  icon and name, and the app is not started to fill it. Writers write
+  only when what is shown changes: a time is a typed value the system UI
+  formats, so "in 5 minutes" or a countdown is never rewritten. A
+  WebAssembly app gives its records through a host function, and the
+  runtime writes and publishes them, for the app's own id only.
 
 ### Languages and formats
 
@@ -323,8 +337,10 @@ Whatever the caller, the system UI checks:
   the background may post notifications and update its widgets, nothing
   on screen.
 - **The templates and intents an app declares:** the manifest (RFC 0008)
-  lists the templates an app shows and the kinds of intent it sends;
-  Packages gives the lists to the system UI, which refuses the others.
+  lists the templates an app shows, the kinds of intent it sends, and its
+  widgets, glances and status icons; Packages gives the lists to the
+  system UI, which refuses the others and draws no record the app did
+  not declare.
 - **The header's icon** is the app's; the screens of layers 4 and 5 are
   never an app's.
 - **An app's screens are never drawn while the device is locked.**
@@ -354,7 +370,10 @@ too:
 - **an app answers within 200 ms** an event that needs a new screen, so
   it is drawn in the key's own redraw; this is the apps' contract;
 - switching apps and returning Home take the full refresh the visual
-  design waits for.
+  design waits for;
+- **a changed widget, glance or status icon** is drawn only where it is
+  on screen, as an Update nobody's key caused: gathered for 1 s, at most
+  every 2 s; a status icon is quiet.
 
 ### Failures
 
@@ -423,7 +442,6 @@ them, for installed native apps.
 | Busy; not responding | 3 s; 10 s |
 | Open after a start | 10 s |
 | Events that cannot be sent, before an app is closed | 3 s |
-| Widgets saved | at most every 5 minutes |
 | Stopping | 3 s (RFC 0008) |
 | Crashes in a row before an app is disabled | 3 |
 | Connections to the system UI | 8 (RFC 0023): the running apps and the runtime |
@@ -440,7 +458,7 @@ them, for installed native apps.
 3. **Form, Choice, Date, Time, Number;** Phone and Contacts (the Contacts
    service first).
 4. **Intents and the chain;** Recent apps.
-5. **Notifications on apps' behalf,** widgets kept by the system UI;
+5. **Notifications on apps' behalf,** widgets from the common store;
    Calendar, Reminders, Clock.
 6. **Readout, long text, Month and Day;** Notes, Weather (with
    placeholder data until it has a source), Calculator, Files.
@@ -454,13 +472,20 @@ Once this RFC is accepted, a follow-up changes:
 - **RFC 0019:** the system UI keeps the stack of apps, and each app its
   own screens; apps give their command letters; a change of language or
   region restarts the device; system screens only through their
-  services; the Home chord in the keys table.
+  services; the Home chord in the keys table; widgets, glances and
+  status icons take their content from the common store, not through
+  the interface.
 - **RFC 0008:** an intent's or action's data may come in chunks; the
-  manifest lists the templates an app shows and the kinds of intent it
-  sends; native apps follow this RFC's life cycle.
+  manifest lists the templates an app shows, the kinds of intent it
+  sends, and its glances and status icons beside its widgets; a host
+  function gives a widget's, glance's or status icon's record; native
+  apps follow this RFC's life cycle.
 - **RFC 0006:** the no-restart option and names up to 63 bytes.
+- **RFC 0010:** `/var/lib/surfaces`, the common store of widgets,
+  glances and status icons, on internal flash.
 - **RFC 0009:** Packages hands apps' intents, actions and the owner's
-  defaults to the system UI, which dispatches them, not to the runtime.
+  defaults to the system UI, which dispatches them, not to the runtime;
+  removing an app deletes its folder in `/var/lib/surfaces`.
 - **RFC 0017:** a change of language or region restarts the device;
   built-in native apps' catalogues live in `/usr/share/locale` under the
   app's id.
@@ -518,6 +543,9 @@ Once this RFC is accepted, a follow-up changes:
   keeps their place, but Home is simpler and a restart is rare.
 - **The runtime decoding and re-encoding apps' messages.** Twice the
   work, and fields it does not know are lost.
+- **Widgets given through the connection, kept by the system UI.** No
+  shared files, but the app or a service must reach the system UI for
+  each change, and the system UI must save what it was given.
 
 ## Costs and risks
 
@@ -534,6 +562,9 @@ Once this RFC is accepted, a follow-up changes:
   first screen; to be measured.
 - **Native apps are trusted:** the checks do not stop one written to
   misbehave.
+- **Widgets write to internal flash:** each change of a record is a
+  file replaced; writers keep to changes of what is shown, and a time
+  is formatted by the system UI, not rewritten.
 - **The manager's two additions** live in the fork, as every other nxinit
   change does ([RFC 0003](0003-repositories.md)).
 
