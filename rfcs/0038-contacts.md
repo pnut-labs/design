@@ -1,6 +1,6 @@
 # RFC 0038: Contacts
 
-- **Status:** Draft
+- **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-11-18
 - **Last changed:** 2026-11-18

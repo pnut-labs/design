@@ -75,4 +75,4 @@ An accepted RFC becomes code, and the code's reference documentation
 | [0035](0035-location.md) | Location | Accepted |
 | [0036](0036-motion.md) | Motion | Accepted |
 | [0037](0037-apps-and-the-system-ui.md) | Apps and the system UI | Accepted |
-| [0038](0038-contacts.md) | Contacts | Draft |
+| [0038](0038-contacts.md) | Contacts | Accepted |
