@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Author:** Mateusz Pianka
 - **Created:** 2026-11-16
-- **Last changed:** 2026-11-16
+- **Last changed:** 2026-11-22
 - **Supersedes / superseded by:** —
 
 ## Summary
@@ -88,7 +88,10 @@ manager). A connection from a task the manager does not know is refused.
 One from a program started at the developer's shell is accepted only
 while Developer options are on, under the id it gives in Open, and is
 logged as such, as [RFC 0030](0030-telephony.md) lets the developer's
-shell do what the system UI may.
+shell do what the system UI may. That id may not be an app's: one that
+has a manifest, or one that is open, is refused. A shell's program has
+no resume token kept and no crashes counted, so it never changes an
+app's.
 
 **Versions.** Methods carry versions as every interface does (RFC 0005).
 The templates and blocks are numbered together as one **catalogue
@@ -117,7 +120,11 @@ and the runtime for WebAssembly apps.
 - **Opening:** the system UI asks Service states to start the app, waits
   for Open, sends Welcome and draws the app's first screen. Nothing new
   is drawn for the first 0.7 s, which is one redraw anyway; after it, the
-  Busy template with the app's name.
+  Busy template with the app's name. An app whose last task has not
+  exited yet, or one tapped while no other app may run, shows the Busy
+  at once and starts as soon as it can; Home, its Cancel or another app
+  forgets it. A task that opens after a newer start of the same app is
+  told to stop, and its exit is no crash.
 - **One app kept warm:** the app that was open before stays running, so
   going back to it is immediate. A third app, or memory running short
   under Board's budget ([RFC 0024](0024-board.md)), stops it first. The
@@ -125,13 +132,20 @@ and the runtime for WebAssembly apps.
   are set.
 - **Stopping:** the system UI sends Stop; the app saves and exits within
   RFC 0008's deadline of 3 s. Past it, Service states stops the task
-  (terminate, then kill).
+  (terminate, then kill). An app that closes, or whose connection
+  closes, has 3 s for its task to exit too, and is then stopped the same
+  way. The system UI follows Service states' services topic to see apps'
+  tasks start and exit.
 - **The resume token:** an opaque message of at most 512 bytes an app
   gives with Resume whenever its place changes: which screen, which item,
-  a draft's id. The system UI keeps it in memory while the app is in the
-  chain or in Recent apps, and gives it back in Welcome with the reason
-  *resumed*. An app does not write flash each time it is left; anything
-  larger it saves itself.
+  a draft's id. The system UI keeps it in memory, and gives it back in
+  each Welcome with the reason *resumed*, until the app gives another or
+  an empty one, closes, or crashes, or the owner closes the app when it
+  isn't responding (below, Failures). A Close that answers Stop keeps it:
+  the app saved its place as it stopped. So does an app taken off for not
+  keeping up (below, Failures). The tokens of a few apps are kept
+  (below, Starting values); a new app's replaces the oldest. An app does
+  not write flash each time it is left; anything larger it saves itself.
 
 ### The screen
 
@@ -379,9 +393,10 @@ too:
 
 | Failure | What the system UI does |
 |---|---|
-| **An answer owed is late** (a first screen, a page of rows, back) | after the key's window, it draws what it has; after 3 s, Busy: "Waiting for *app*…" with Cancel, which closes the app; after 10 s, a Confirm: "*app* isn't responding", Wait or Close |
+| **An answer owed is late** (a first screen, a page of rows, back) | after the key's window, it draws what it has; after 3 s, a screen of the system UI's own: "Waiting for *app*…" with Cancel, which closes the app; after 10 s, in its place: "*app* isn't responding", with Wait (another 10 s) or Close. Full screens, not sheets: the app's screen may not exist yet, and a hung app's screen is not the owner's to act on |
 | **Events cannot be sent** for 3 s (the app stopped reading), or Open never comes after a start (10 s) | closes the connection, asks Service states to stop the app, and takes its screen off (RFC 0004: a client that stays behind is disconnected) |
 | **The connection closes** (the app exited or crashed) | the app leaves the chain at once; the app before it, or Home, shows; logged with the app's id; no dialog. An app that crashes 3 times in a row is disabled, as RFC 0008 says, until the owner turns it on again |
+| **The app exits before it opens** (its task gone on the services topic before Open) | the Busy goes at once; counted as a crash, as for a connection that closes |
 | **The system UI itself restarts** (the manager restarts it) | Home; an app that reconnects has its Open answered with Stop |
 
 ### WebAssembly apps
@@ -431,6 +446,7 @@ them, for installed native apps.
 |---|---|
 | A message | 4 KB (RFC 0023) |
 | A resume token | 512 bytes |
+| Apps whose resume token is kept | 4 |
 | Rows per page; rows kept per screen | 20; 200 |
 | A text block; a chunk | 32 KB; 3 KB |
 | Apps in a chain | 3 |
