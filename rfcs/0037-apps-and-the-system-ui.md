@@ -135,7 +135,8 @@ and the runtime for WebAssembly apps.
   (terminate, then kill). An app that closes, or whose connection
   closes, has 3 s for its task to exit too, and is then stopped the same
   way. The system UI follows Service states' services topic to see apps'
-  tasks start and exit.
+  tasks start and exit, and asks Service states when the topic may have
+  missed an exit (a gap in the topic, or a tap on an app still waiting).
 - **The resume token:** an opaque message of at most 512 bytes an app
   gives with Resume whenever its place changes: which screen, which item,
   a draft's id. The system UI keeps it in memory, and gives it back in
