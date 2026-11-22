@@ -140,10 +140,11 @@ and the runtime for WebAssembly apps.
   gives with Resume whenever its place changes: which screen, which item,
   a draft's id. The system UI keeps it in memory, and gives it back in
   each Welcome with the reason *resumed*, until the app gives another or
-  an empty one, closes, or crashes, or the owner closes the app when it
-  isn't responding (below, Failures). A Close that answers Stop keeps it:
-  the app saved its place as it stopped. So does an app taken off for not
-  keeping up (below, Failures). The tokens of a few apps are kept
+  an empty one, closes, or crashes, or the owner closes the app while
+  waiting for it or when it isn't responding (below, Failures). A Close
+  that answers Stop keeps it: the app saved its place as it stopped. So
+  does an app taken off for not keeping up, which is no crash (below,
+  Failures). The tokens of a few apps are kept
   (below, Starting values); a new app's replaces the oldest. An app does
   not write flash each time it is left; anything larger it saves itself.
 
@@ -455,7 +456,7 @@ them, for installed native apps.
 | Nothing drawn after opening an app | 0.7 s |
 | An app's answer inside a key's window | 200 ms |
 | Updates nobody's key caused | gathered for 1 s, drawn at most every 2 s |
-| Busy; not responding | 3 s; 10 s |
+| Waiting; not responding | 3 s; 10 s |
 | Open after a start | 10 s |
 | Events that cannot be sent, before an app is closed | 3 s |
 | Stopping | 3 s (RFC 0008) |
@@ -573,7 +574,7 @@ Once this RFC is accepted, a follow-up changes:
   plan for. The budget's
   values are measured before they are set.
 - **Back crosses programs** every time; a slow app costs a second partial
-  refresh, and a hung one shows Busy.
+  refresh, and a hung one shows "Waiting for *app*…".
 - **Returning to a stopped app** pays a start: a task, a connection, the
   first screen; to be measured.
 - **Native apps are trusted:** the checks do not stop one written to
